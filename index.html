@@ -28,36 +28,54 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
+	
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="js/bootstrap.js"></script>
 	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
 	<script src="js/visualizeHelper.js"></script>
-<script type="text/JavaScript">
 
+	<script type="text/JavaScript">
 
- BIF.init({
-    domain: 'http://localhost:8080/jasperserver-pro',
-    username: 'superuser',
-    password: 'superuser',
-    mods: ['reports']
-	}, function(Reports) {
-    mReport = Reports.open({
-        uri: '/public/Samples/Reports/2_Sales_Mix_by_Demographic_Report',
-        container: 
-  document.getElementById('report1'),
-        onReportFinished: function() {
-            $('#overlay').hide();
-        }   
-    });
-    bReport = Reports.open({
-        uri: '/public/Samples/Reports/1._Geographic_Results_by_Segment_Report',
-        container: 
-  document.getElementById('report2'),
-        onReportFinished: function() {
-            $('#overlay').hide();
-        }   
-    });                   
-});
-</script>
+	    BIF.init({    
+	        domain: 'http://localhost:8080/jasperserver-pro',    
+	        username: 'jasperadmin',    
+	        password: 'jasperadmin',      
+	        mods: ['repository', 'reports']
+	        }, function(Repo, Reports) { 
+	            jsRepository = Repo;
+	            jsReportUnit = Reports;
+	            initializeReports();
+	        }
+	    );
 
+	    // Now using the funtions in visualizeHelper.js 
+	    
+	    function initializeReports() {
+	    	var uri_a = '/public/Samples/Reports/2_Sales_Mix_by_Demographic_Report';
+	    	var uri_b = '/public/Samples/Reports/1._Geographic_Results_by_Segment_Report';
+	    	
+	    	runReport(uri_a, 'report1');
+	    	runReport(uri_b, 'report2');
+		}
+	 
+	</script>
+    <style type="text/css">
+	    #repo h3 {
+	        padding: 5px 0;
+	        margin: 0;
+	    }
+	    #repo table {
+	        border-collapse: collapse;
+	    }
+	    #repo td {
+	        border: solid 1px #eee;
+	        padding: 4px 0;
+	    }
+	    .fill { top:20; right:0; bottom:0; left:0}
+	    #overlay { background: #333; opacity: 0.33}
+	    #ajax-icon { width:64px; height: 64px; margin:auto; color: #fff; text-align: center}
+	</style>
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-static-top">
@@ -112,8 +130,8 @@
 
 </div>
 
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-	<script src="js/bootstrap.js"></script>
+	
+
 
 
 </body>
