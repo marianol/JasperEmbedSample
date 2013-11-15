@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bootstrap 3</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/styles.css" rel="stylesheet">
+	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
+<script type="text/JavaScript">
+ BIF.init({
+    domain: 'http://localhost:8080/jasperserver-pro',
+    username: 'superuser',
+    password: 'superuser',
+    mods: ['reports']
+	}, function(Reports) {
+    mReport = Reports.open({
+        uri: '/public/Samples/Reports/2_Sales_Mix_by_Demographic_Report',
+        container: 
+  document.getElementById('report1'),
+        onReportFinished: function() {
+            $('#overlay').hide();
+        }   
+    });
+    bReport = Reports.open({
+        uri: '/public/Samples/Reports/1._Geographic_Results_by_Segment_Report',
+        container: 
+  document.getElementById('report2'),
+        onReportFinished: function() {
+            $('#overlay').hide();
+        }   
+    });                   
+});
+</script>
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-static-top">
+	<div class="container">
+			<a href="#" class="navbar-brand">Jaspersoft Reports</a>
+			<button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+
+			<div class="collapse navbar-collapse navHeaderCollapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li class="active"><a href="#">Home</a></li>
+					<li><a href="#">Blog</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Social Media <b class="caret"></b><a/>
+						<ul class="dropdown-menu">
+							<li><a href="#">Twitter</a></li>
+							<li><a href="#">facebook</a></li>
+							<li><a href="#">Google</a></li>
+							<li><a href="#">Instagram</a></li>
+						</ul>
+					</li>
+					<li><a href="#">About</a></li>
+				</ul>
+			</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+
+		<div class="col-md-6">
+			<h3><a href="#">JasperReport One</a></h3>
+			<div id="report1" class="fill"></div>
+    				<div id="ajax-icon" class="fill">
+        				<i class="icon-spinner icon-spin icon-3x"></i> 
+        				<p>Loading...</p>
+    				</div>
+		</div>
+
+		<div class="col-md-6">
+			<h3><a href="#">JasperReport Two</a></h3>
+			<div id="report2" class="fill2"></div>
+    				<div id="ajax-icon" class="fill">
+        				<i class="icon-spinner icon-spin icon-3x"></i> 
+        				<p>Loading...</p>
+    				</div>
+		</div>
+	</div>
+
+</div>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="js/bootstrap.js"></script>
+
+
+</body>
+</html>
