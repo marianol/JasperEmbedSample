@@ -1,3 +1,4 @@
+/*
  * ========================================================================
  * visualizeHelper.js : v0.0.2
  * 
@@ -17,7 +18,16 @@
  *
  * You should have received a copy of the GNU Affero General Public License 
  * along with this program. If not, see http://www.gnu.org/licenses/.
- * ======================================================================== */
+ * ======================================================================== 
+ */
+
+// Initialize Repor and Report objects
+var jsRepository;
+var jsReportUnit;
+
+function setOverlay(divID) {
+    $(divID).html( '<div id="overlay" class="fill"><div id="ajax-icon" class="fill"><i class="icon-spinner icon-spin icon-3x"></i><p>Loading...</p></div>');
+}
 
 function runReport(reportURI, targetDiv)
     {
