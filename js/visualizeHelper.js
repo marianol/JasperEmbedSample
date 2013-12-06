@@ -50,14 +50,20 @@ function runReport(reportURI, targetDiv)
 
 function RepoList(path) 
     {
-        jsRepository.ls({type: 'reportUnit', limit: 10}).then(
+        jsRepository.ls({type: 'reportUnit', limit: 100}).then(
             function(data) {
                 $.each(data, function() {
-                    $('#reportsList').append('<tr><td>' + this.label + '</td><td>' + this.creationDate + ' - ' + this.uri + '</td>' + '<td><button id="buttong"  onclick="runReport(\'' + this.uri + '\')" >RUN</button></td></tr>');   
+                    $('#reportsList').append('<tr><td>' + this.label + '</td><td>' + this.creationDate 
+                        + '</td>' 
+                        + '<td>'
+                        + '<button id="buttong"  onclick="runReport(\'' + this.uri + '\', \'report1\')" >RUN in One</button>&nbsp;&nbsp;' 
+                        + '<button id="buttong"  onclick="runReport(\'' + this.uri + '\', \'report2\')" >RUN in Two</button>' 
+                        + '</td></tr>');   
                 });
             });
        
         /*
+        + ' - ' + this.uri 
         Response Sample:
         creationDate: "2013-10-29 12:20:10"
         description: "Sample HTML5 multi-axis column chart from Domain showing Sales, Units, and Sales/Square Feet by Country and Store Type with various filters"

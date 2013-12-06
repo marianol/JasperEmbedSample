@@ -24,14 +24,16 @@
 
 <html lang="en">
 <head>
-	<title>JasperDemo</title>
+	<title>Jasper Server Embedded Demo</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
 	
 
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	
 	<script src="js/bootstrap.js"></script>
+	<script src="js/require.js"></script>
 	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
 	<script src="js/visualizeHelper.js"></script>
 
@@ -76,12 +78,16 @@
 	    .fill { top:20; right:0; bottom:0; left:0}
 	    #overlay { background: #333; opacity: 0.33}
 	    #ajax-icon { width:64px; height: 64px; margin:auto; color: #fff; text-align: center}
+	    .mygrid-wrapper-div {
+		    overflow: scroll;
+		    height: 400px;
+			}
 	</style>
 </head>
 <body onLoad="$('#repo').hide();">
 <div class="navbar navbar-inverse navbar-static-top">
-	<div class="container">
-			<a href="#" class="navbar-brand">Jaspersoft Reports</a>
+	<div class="container" style="width:100%; ">
+			<a href="#" class="navbar-brand">Jaspersoft Portal</a>
 			<button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
@@ -91,9 +97,9 @@
 			<div class="collapse navbar-collapse navHeaderCollapse">
 				<ul class="nav navbar-nav navbar-right">
 					<li class="active"><a href="#">Home</a></li>
-					<li><a href="#">Repository</a></li>
+					<li><a href="#" onclick="RepoList(); $('#repo').show();" >Repository</a></li>
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Social Media <b class="caret"></b><a/>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Future Feature <b class="caret"></b><a/>
 						<ul class="dropdown-menu">
 							<li><a href="#">Twitter</a></li>
 							<li><a href="#">facebook</a></li>
@@ -107,10 +113,10 @@
 	</div>
 </div>
 
-<div class="container">
+	<div class="container" style="width:100%; ">
 	<div class="row">
 		<div class="col-md-12">
-			<div id="repo">
+			<div id="repo" class="mygrid-wrapper-div">
 			<table id="reportsList" width="100%">
 			    <tr><td colspan="3" style="background: #eee;"><h3>My Reports</h3></td></tr>
 			</table>
@@ -120,7 +126,7 @@
 	<div class="row">
 
 		<div class="col-md-6">
-			<h3><a href="#">JasperReport One</a></h3>
+			<h3><a href="#">One</a></h3>
 			<div id="report1" class="fill"></div>
     				<div id="ajax-icon" class="fill">
         				<i class="icon-spinner icon-spin icon-3x"></i> 
@@ -129,7 +135,7 @@
 		</div>
 
 		<div class="col-md-6">
-			<h3><a href="#">JasperReport Two</a></h3>
+			<h3><a href="#">Two</a></h3>
 			<div id="report2" class="fill2"></div>
     				<div id="ajax-icon" class="fill">
         				<i class="icon-spinner icon-spin icon-3x"></i> 
