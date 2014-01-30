@@ -31,10 +31,11 @@ function setOverlay(divID) {
 
 function runReport(reportURI, targetDiv)
     {
+
       //alert(inputVal);
       $('#overlay').show();
       //$('#container')
-      myReport = {
+      var myReport = {
                 uri : reportURI ,
                 container : document.getElementById(targetDiv),
                 onReportFinished: function(status) { 

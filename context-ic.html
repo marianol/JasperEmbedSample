@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
  * ========================================================================
- * index.html 
+ * context-ic.html
  * 
  * ========================================================================
  * Copyright 2013 
@@ -24,7 +24,7 @@
 
 <html lang="en">
 <head>
-	<title>Home - JRS Embedded Demo</title>
+	<title>Contextual Input Controls - JRS Embedded Demo</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
@@ -38,30 +38,55 @@
 	<script src="js/visualizeHelper.js"></script>
 
 	<script type="text/JavaScript">
-		
+		var myReport;
 
 	    BIF.init({    
 	        domain: 'http://localhost:8080/jasperserver-pro',    
 	        username: 'jasperadmin',    
 	        password: 'jasperadmin',      
-	        mods: ['repository', 'reports']
-	        }, function(Repo, Reports) { 
-	            jsRepository = Repo;
+	        mods: ['reports']
+	        }, function(Reports) {
 	            jsReportUnit = Reports;
-	            initializeReports();
+	            initialize();
 	        }
 	    );
 
-	    // Now using the funtions in visualizeHelper.js 
+	    // Now using the functions in visualizeHelper.js
 	    
-	    function initializeReports() {
-	    	var uri_a = '/public/Samples/Reports/2_Sales_Mix_by_Demographic_Report';
-	    	var uri_b = '/public/Samples/Reports/1._Geographic_Results_by_Segment_Report';
-	    	
-	    	runReport(uri_a, 'report1');
-	    	runReport(uri_b, 'report2');
-	    	RepoList(); 
+	    function initialize() {
+	    	var reportUri = '/public/Samples/Reports/ProfitDetailReport';
+
+	    	myReport = runReport(reportUri, 'report1');
+
+            myReport.rdy.then(function() {
+                myReport.getInputParameters().then(function() {
+                    setupOptions(myReport.inputParameters);
+                    $('#btn').click(function() {
+                        $('#overlay').show();
+                        myReport.run({
+                            ProductFamily: $('#inputOptions').val()
+                        });
+                    });
+                });
+            });
 		}
+
+        function setupOptions(inputParameters) {
+            $('#inputName').html(inputParameters[0].label);
+            $.each(inputParameters[0].state.options, function() {
+                $('#inputOptions').append('<option value="'+this.value+'">'+this.label+'</option>');
+            });
+        }
+
+        function passControls(paramValue) {
+            var myParameters;
+
+            myParameters = {
+                ProductFamily: paramValue
+            };
+
+            myReport.run(myParameters)
+        }
 
 	    
 	</script>
@@ -86,7 +111,7 @@
 			}
 	</style>
 </head>
-<body onLoad="$('#repo').hide();">
+<body onLoad="">
 <div class="navbar navbar-inverse navbar-static-top">
 	<div class="container" style="width:100%; ">
 			<a href="#" class="navbar-brand">Jaspersoft Portal</a>
@@ -118,34 +143,30 @@
 	<div class="container" style="width:100%; ">
 	<div class="row">
 		<div class="col-md-12">
-			<button id="buttonrepo"  onclick="$('#repo').toggle();" >Toggle Report List</button>
-			
-			<div id="repo" class="mygrid-wrapper-div">
-			<table id="reportsList" width="100%">
-			    <tr><td colspan="3" style="background: #eee;"><h3>My Reports</h3></td></tr>
-			</table>
-			</div>
+			<button id="buttonDrinks"  onclick="passControls('Drink');" >Show Drinks Only</button>
+
 		</div>
 	</div>
 	<div class="row">
 
-		<div class="col-md-6">
-			<h3><a href="#">One</a></h3>
+		<div class="col-md-8">
+			<h3><a href="#">Profit Detail</a></h3>
 			<div id="report1" class="fill"></div>
     				<div id="ajax-icon" class="fill">
         				<i class="icon-spinner icon-spin icon-3x"></i> 
         				<p>Loading...</p>
     				</div>
 		</div>
+        <div class="col-md-1">
 
-		<div class="col-md-6">
-			<h3><a href="#">Two</a></h3>
-			<div id="report2" class="fill2"></div>
-    				<div id="ajax-icon" class="fill">
-        				<i class="icon-spinner icon-spin icon-3x"></i> 
-        				<p>Loading...</p>
-    				</div>
-		</div>
+        </div>
+		<div class="col-md-3">
+			<h4>Select your filters</h4>
+            <p><strong> <span id="inputName"></span> :</strong></p>
+            <select multiple id="inputOptions"></select>
+            <button id="btn">Run Report</button>
+
+        </div>
 	</div>
 
 </div>
