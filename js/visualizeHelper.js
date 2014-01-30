@@ -35,16 +35,18 @@ function runReport(reportURI, targetDiv)
       //alert(inputVal);
       $('#overlay').show();
       //$('#container')
-      var myReport = {
+      var theReport = {
                 uri : reportURI ,
                 container : document.getElementById(targetDiv),
-                onReportFinished: function(status) { 
-                    //alert(status.totalPages);
-                    myReport.gotoPage(0);
+                onReportFinished: function(status) {
                     $('#overlay').hide();
+                    if ( typeof ReportFinishedCallback == 'function' ) {
+                        ReportFinishedCallback(status);
+                    }
+                    theReport.gotoPage(0);
                 }
             };
-       mReport = jsReportUnit.open(myReport);
+       var mReport = jsReportUnit.open(theReport);
        return mReport;
     };
 
