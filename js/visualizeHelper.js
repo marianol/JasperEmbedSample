@@ -44,7 +44,7 @@ function runReport(reportURI, targetDiv)
                 }
             };
        mReport = jsReportUnit.open(myReport);
-
+       return mReport;
     };
 
 

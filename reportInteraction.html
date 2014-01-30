@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <!--
  * ========================================================================
- * index.html 
+ * reportInteraction.html 
  * 
  * ========================================================================
  * Copyright 2013 
+ * Author: Bing Wang
  * Author: Mariano Luna
  *
  * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
@@ -24,7 +25,7 @@
 
 <html lang="en">
 <head>
-	<title>Home - JRS Embedded Demo</title>
+	<title>Report Interaction - JRS Embedded Demo</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
@@ -33,20 +34,23 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	
 	<script src="js/bootstrap.js"></script>
-	<script src="js/require.js"></script>
+
 	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
 	<script src="js/visualizeHelper.js"></script>
 
-	<script type="text/JavaScript">
-		
+	<script src="http://maps.google.com/maps/api/js?sensor=false" 
+          type="text/javascript"></script>
 
+	<script type="text/JavaScript">
+		var myReport;
+
+		// Initialize Visualize.js
 	    BIF.init({    
 	        domain: 'http://localhost:8080/jasperserver-pro',    
 	        username: 'jasperadmin',    
 	        password: 'jasperadmin',      
-	        mods: ['repository', 'reports']
-	        }, function(Repo, Reports) { 
-	            jsRepository = Repo;
+	        mods: ['reports']
+	        }, function(Reports) { 
 	            jsReportUnit = Reports;
 	            initializeReports();
 	        }
@@ -55,14 +59,10 @@
 	    // Now using the funtions in visualizeHelper.js 
 	    
 	    function initializeReports() {
-	    	var uri_a = '/public/Samples/Reports/2_Sales_Mix_by_Demographic_Report';
-	    	var uri_b = '/public/Samples/Reports/1._Geographic_Results_by_Segment_Report';
+	    	var report_uri = '/public/SalesPerCityReport';
 	    	
-	    	runReport(uri_a, 'report1');
-	    	runReport(uri_b, 'report2');
-	    	RepoList(); 
+	    	myReport = runReport(report_uri, 'report2');
 		}
-
 	    
 	</script>
     <style type="text/css">
@@ -99,7 +99,6 @@
 			<div class="collapse navbar-collapse navHeaderCollapse">
 				<ul class="nav navbar-nav navbar-right">
 					<li class="active"><a href="index.html">Home</a></li>
-					
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Extra Samples <b class="caret"></b><a/>
 						<ul class="dropdown-menu">
@@ -115,37 +114,54 @@
 	</div>
 </div>
 
-	<div class="container" style="width:100%; ">
-	<div class="row">
-		<div class="col-md-12">
-			<button id="buttonrepo"  onclick="$('#repo').toggle();" >Toggle Report List</button>
-			
-			<div id="repo" class="mygrid-wrapper-div">
-			<table id="reportsList" width="100%">
-			    <tr><td colspan="3" style="background: #eee;"><h3>My Reports</h3></td></tr>
-			</table>
-			</div>
-		</div>
-	</div>
+<div class="container">
 	<div class="row">
 
 		<div class="col-md-6">
-			<h3><a href="#">One</a></h3>
-			<div id="report1" class="fill"></div>
-    				<div id="ajax-icon" class="fill">
-        				<i class="icon-spinner icon-spin icon-3x"></i> 
-        				<p>Loading...</p>
-    				</div>
-		</div>
+			<h3><a href="#">Google Map</a></h3>
+				<div id="map" style="width:100%; height:400px;"></div>
+					<script type="text/javascript">
+
+					    var locations = [
+					['Alameda',37.765278, -122.240556,5],
+					['Los Angeles',34.052222, -118.242778,4],
+					['San Diego',32.715278, -117.156389,3],
+					['San Francisco',37.775000, -122.418333,2],
+					['Beverly Hills',34.073611, -118.399444,1],
+					];
+
+
+					    var map = new google.maps.Map(document.getElementById('map'), {
+					      zoom: 4,
+					      center: new google.maps.LatLng(34.052222, -118.242778),
+					      mapTypeId: google.maps.MapTypeId.ROADMAP
+					    });
+
+					    var infowindow = new google.maps.InfoWindow();
+
+					    var marker, i;
+
+					    for (i = 0; i < locations.length; i++) {  
+					      marker = new google.maps.Marker({
+					        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+					        map: map
+					      });
+
+					      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+					        return function() {
+					          infowindow.setContent(locations[i][0]);
+					          myReport.run({store_city_1: locations[i][0]})
+					          infowindow.open(map, marker);
+					        }
+					      })(marker, i));
+					    }
+					  </script>
+    		</div>
 
 		<div class="col-md-6">
-			<h3><a href="#">Two</a></h3>
-			<div id="report2" class="fill2"></div>
-    				<div id="ajax-icon" class="fill">
-        				<i class="icon-spinner icon-spin icon-3x"></i> 
-        				<p>Loading...</p>
-    				</div>
-		</div>
+			<h3><a href="#">JasperReport</a></h3>
+			<div id="report2"></div>
+    	</div>
 	</div>
 
 </div>
