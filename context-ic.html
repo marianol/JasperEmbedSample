@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<!--
+ * ========================================================================
+ * index.html 
+ * 
+ * ========================================================================
+ * Copyright 2013 
+ * Author: Mariano Luna
+ *
+ * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the 
+ * GNU Affero General Public License as published by the Free Software Foundation, either version 3 
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public 
+ * License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License 
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ * ======================================================================== */
+-->
+
+<html lang="en">
+<head>
+	<title>Home - JRS Embedded Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/styles.css" rel="stylesheet">
+	
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	
+	<script src="js/bootstrap.js"></script>
+	<script src="js/require.js"></script>
+	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
+	<script src="js/visualizeHelper.js"></script>
+
+	<script type="text/JavaScript">
+		
+
+	    BIF.init({    
+	        domain: 'http://localhost:8080/jasperserver-pro',    
+	        username: 'jasperadmin',    
+	        password: 'jasperadmin',      
+	        mods: ['repository', 'reports']
+	        }, function(Repo, Reports) { 
+	            jsRepository = Repo;
+	            jsReportUnit = Reports;
+	            initializeReports();
+	        }
+	    );
+
+	    // Now using the funtions in visualizeHelper.js 
+	    
+	    function initializeReports() {
+	    	var uri_a = '/public/Samples/Reports/2_Sales_Mix_by_Demographic_Report';
+	    	var uri_b = '/public/Samples/Reports/1._Geographic_Results_by_Segment_Report';
+	    	
+	    	runReport(uri_a, 'report1');
+	    	runReport(uri_b, 'report2');
+	    	RepoList(); 
+		}
+
+	    
+	</script>
+    <style type="text/css">
+	    #repo h3 {
+	        padding: 5px 0;
+	        margin: 0;
+	    }
+	    #repo table {
+	        border-collapse: collapse;
+	    }
+	    #repo td {
+	        border: solid 1px #eee;
+	        padding: 4px 0;
+	    }
+	    .fill { top:20; right:0; bottom:0; left:0}
+	    #overlay { background: #333; opacity: 0.33}
+	    #ajax-icon { width:64px; height: 64px; margin:auto; color: #fff; text-align: center}
+	    .mygrid-wrapper-div {
+		    overflow: scroll;
+		    height: 400px;
+			}
+	</style>
+</head>
+<body onLoad="$('#repo').hide();">
+<div class="navbar navbar-inverse navbar-static-top">
+	<div class="container" style="width:100%; ">
+			<a href="#" class="navbar-brand">Jaspersoft Portal</a>
+			<button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+
+			<div class="collapse navbar-collapse navHeaderCollapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li class="active"><a href="index.html">Home</a></li>
+					
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Extra Samples <b class="caret"></b><a/>
+						<ul class="dropdown-menu">
+							<li><a href="context-ic.html">Contextual Input Controls</a></li>
+							<li><a href="reportInteraction.html">Report Interaction</a></li>
+							<li><a href="dashboard.html">Dashboard</a></li>
+							
+						</ul>
+					</li>
+					<li><a href="about.html">About</a></li>
+				</ul>
+			</div>
+	</div>
+</div>
+
+	<div class="container" style="width:100%; ">
+	<div class="row">
+		<div class="col-md-12">
+			<button id="buttonrepo"  onclick="$('#repo').toggle();" >Toggle Report List</button>
+			
+			<div id="repo" class="mygrid-wrapper-div">
+			<table id="reportsList" width="100%">
+			    <tr><td colspan="3" style="background: #eee;"><h3>My Reports</h3></td></tr>
+			</table>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+
+		<div class="col-md-6">
+			<h3><a href="#">One</a></h3>
+			<div id="report1" class="fill"></div>
+    				<div id="ajax-icon" class="fill">
+        				<i class="icon-spinner icon-spin icon-3x"></i> 
+        				<p>Loading...</p>
+    				</div>
+		</div>
+
+		<div class="col-md-6">
+			<h3><a href="#">Two</a></h3>
+			<div id="report2" class="fill2"></div>
+    				<div id="ajax-icon" class="fill">
+        				<i class="icon-spinner icon-spin icon-3x"></i> 
+        				<p>Loading...</p>
+    				</div>
+		</div>
+	</div>
+
+</div>
+
+	
+
+
+
+</body>
+</html>
