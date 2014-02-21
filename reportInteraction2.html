@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!--
+ * ========================================================================
+ * reportInteraction.html 
+ * 
+ * ========================================================================
+ * Copyright 2013 
+ * Author: Bing Wang
+ * Author: Mariano Luna
+ *
+ * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the 
+ * GNU Affero General Public License as published by the Free Software Foundation, either version 3 
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public 
+ * License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License 
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ * ======================================================================== */
+-->
+
+<html lang="en">
+<head>
+	<title>Report Interaction - JRS Embedded Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/styles.css" rel="stylesheet">
+	
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	
+	<script src="js/bootstrap.js"></script>
+
+	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
+	<script src="js/visualizeHelper.js"></script>
+
+	<script src="http://maps.google.com/maps/api/js?sensor=false" 
+          type="text/javascript"></script>
+
+	<script type="text/javascript">
+	
+	$(window).load(function () {
+	    BIF.init({
+	        domain: 'http://localhost:8080/jasperserver-pro',
+	        username: 'jasperadmin',
+	        password: 'jasperadmin',
+	        mods: ['reports']
+	    }, function (Reports) {
+	        myReport = Reports.open({
+	            uri: '/public/Samples/VisualizeJS/StatesJFC',
+	            container: document.getElementById('states'),
+	            onReportFinished: function () {
+	                $('#overlay').hide();
+	                updateState('CA');
+	            }
+	        });
+	    });
+	});
+
+	function updateState(stateName) {
+	    BIF.init({
+	        domain: 'http://localhost:8080/jasperserver-pro',
+	        username: 'jasperadmin',
+	        password: 'jasperadmin',
+	        mods: ['reports']
+	    }, function (Reports) {
+	        myReport = Reports.open({
+	            uri: '/public/Samples/VisualizeJS/Cities',
+	            container: document.getElementById('cities'),
+	            inputParameters: {
+	                state: stateName
+	            },
+	            onReportFinished: function () {
+	                $('#overlay').hide();
+	            }
+	        });
+	    });
+	};
+	</script>
+    <style type="text/css">
+	    #repo h3 {
+	        padding: 5px 0;
+	        margin: 0;
+	    }
+	    #repo table {
+	        border-collapse: collapse;
+	    }
+	    #repo td {
+	        border: solid 1px #eee;
+	        padding: 4px 0;
+	    }
+	    .fill { top:20; right:0; bottom:0; left:0}
+	    #overlay { background: #333; opacity: 0.33}
+	    #ajax-icon { width:64px; height: 64px; margin:auto; color: #fff; text-align: center}
+	    .mygrid-wrapper-div {
+		    overflow: scroll;
+		    height: 400px;
+			}
+	</style>
+</head>
+<body onLoad="">
+<div class="navbar navbar-inverse navbar-static-top">
+	<div class="container" style="width:100%; ">
+			<a href="#" class="navbar-brand">Jaspersoft Portal</a>
+			<button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+
+			<div class="collapse navbar-collapse navHeaderCollapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li class="active"><a href="index.html">Home</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Extra Samples <b class="caret"></b><a/>
+						<ul class="dropdown-menu">
+							<li><a href="context-ic.html">Contextual Input Controls</a></li>
+							<li><a href="reportInteraction.html">External Report Interaction</a></li>
+							<li><a href="reportInteraction2.html">Report Interaction</a></li>
+							<li><a href="dashboard.html">Dashboard</a></li>
+							
+						</ul>
+					</li>
+					<li><a href="about.html">About</a></li>
+				</ul>
+			</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+
+<div class="col-md-6">
+			<h3><a href="#">Sales by State</a></h3>
+			<div id="states"></div>
+    	</div>
+
+		<div class="col-md-6">
+		<h3><a href="#">Sales by City</a></h3>
+			<div id="cities"></div>
+		</div>
+
+		
+
+</div>
+
+	
+
+
+
+</body>
+</html>
