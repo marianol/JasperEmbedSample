@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <!--
  * ========================================================================
- * reportInteraction.html 
+ * reportPopUp.html 
  * 
  * ========================================================================
- * Copyright 2013 
- * Author: Bing Wang
- * Author: Mariano Luna
+ * Copyright 2014 
+ * Author: Ernesto 0ngaro
  *
  * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
  *
@@ -32,6 +31,8 @@
 	
 
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/smoothness/jquery-ui.css" />
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
 	
 	<script src="js/bootstrap.js"></script>
 
@@ -41,29 +42,69 @@
 	<script src="http://maps.google.com/maps/api/js?sensor=false" 
           type="text/javascript"></script>
 
-	<script type="text/JavaScript">
-		var myReport;
-
-		// Initialize Visualize.js
-	    BIF.init({    
-	        domain: 'http://localhost:8080/jasperserver-pro',    
-	        username: 'jasperadmin',    
-	        password: 'jasperadmin',      
+	<script type="text/javascript">
+	
+	$(window).load(function () {
+	    BIF.init({
+	        domain: 'http://localhost:8080/jasperserver-pro',
+	        username: 'jasperadmin',
+	        password: 'jasperadmin',
 	        mods: ['reports']
-	        }, function(Reports) { 
-	            jsReportUnit = Reports;
-	            initializeReports();
-	        }
-	    );
+	    }, function (Reports) {
+	        myReport = Reports.open({
+	            uri: '/public/Samples/VisualizeJS/AccountList',
+	            container: document.getElementById('parent'),
+	            onReportFinished: function () {
+	                $('#overlay').hide();
+	                updateState('CA');
+	            }
+	        });
+	    });
+	});
 
-	    // Now using the funtions in visualizeHelper.js 
-	    
-	    function initializeReports() {
-	    	var report_uri = '/public/SalesPerCityReport';
-	    	
-	    	myReport = runReport(report_uri, 'report2');
-		}
-	    
+/////////////////////////////////////////////////////////////////
+//Code created by Gene Arnold for javascript drill down feature//
+
+//The following two lines of code are to get jQuery to work without conflicts and loading the visualize.js library
+var $j = jQuery.noConflict();
+$j.getScript("http://localhost:8080/jasperserver-pro/bif/visualize.js");
+
+runReport = function(obj){
+    
+    //Creating a report object to pass into visualize.js
+    var objReport = new Object();
+    objReport.uri = obj.reportDetails.reportURI;
+    objReport.container = $j("#report");
+    objReport.inputParameters = obj.reportDetails.inputParameters;
+
+    //Setting up jquery dialog box and loading it into window
+    //Setting the report div to "Report is Loading" and visualize.js will change that to report
+    var report_Title = obj.reportDetails.reportTitle;
+    $j("#dialog").dialog({
+      	height: "auto", 
+	width: "auto", 
+	title: report_Title,
+      	autoOpen: true,
+      	show: {
+        	effect: "blind",
+        	duration: 10
+      	      },
+      hide: {
+        effect: "clip",
+        duration: 1000
+      }
+    });
+//    $j("#report").text("Report is Loading");
+
+    //Actual building and loading of JasperReport via javascript
+    BIF.init({
+        domain: 'http://localhost:8080/jasperserver-pro',
+        mods: ['reports']
+    }, function(Reports) {
+        mReport = Reports.open(objReport);
+    });
+
+};
 	</script>
     <style type="text/css">
 	    #repo h3 {
@@ -105,7 +146,7 @@
 							<li><a href="context-ic.html">Contextual Input Controls</a></li>
 							<li><a href="reportInteraction.html">External Report Interaction</a></li>
 							<li><a href="reportInteraction2.html">Report Interaction</a></li>
-							<li><a href="reportPopup.html">Report Popup</a></li>
+                            <li><a href="reportPopup.html">Report Popup</a></li>
 							<li><a href="dashboard.html">Dashboard</a></li>
 							
 						</ul>
@@ -119,58 +160,17 @@
 <div class="container">
 	<div class="row">
 
-		<div class="col-md-6">
-			<h3><a href="#">Location Map</a></h3>
-				<div id="map" style="width:100%; height:400px;"></div>
-					<script type="text/javascript">
-
-					    var locations = [
-					['Alameda',37.765278, -122.240556,5],
-					['Los Angeles',34.052222, -118.242778,4],
-					['San Diego',32.715278, -117.156389,3],
-					['San Francisco',37.775000, -122.418333,2],
-					['Beverly Hills',34.073611, -118.399444,1],
-					];
-
-
-					    var map = new google.maps.Map(document.getElementById('map'), {
-					      zoom: 4,
-					      center: new google.maps.LatLng(34.052222, -118.242778),
-					      mapTypeId: google.maps.MapTypeId.ROADMAP
-					    });
-
-					    var infowindow = new google.maps.InfoWindow();
-
-					    var marker, i;
-
-					    for (i = 0; i < locations.length; i++) {  
-					      marker = new google.maps.Marker({
-					        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-					        map: map
-					      });
-
-					      google.maps.event.addListener(marker, 'click', (function(marker, i) {
-					        return function() {
-					          infowindow.setContent(locations[i][0]);
-					          myReport.run({store_city_1: locations[i][0]})
-					          infowindow.open(map, marker);
-					        }
-					      })(marker, i));
-					    }
-					  </script>
-    		</div>
-
-		<div class="col-md-6">
-			<h3><a href="#">Sales by City</a></h3>
-			<div id="report2"></div>
+<div class="col-md-6">
+			<h3><a href="#">Store Sales</a></h3>
+			<div id="parent"></div>
     	</div>
-	</div>
 
+<div id="dialog" title="Basic dialog">
+	<div id="report"></div>
 </div>
 
-	
+		
 
-
-
+</div>
 </body>
 </html>
