@@ -37,48 +37,35 @@
 	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
 	<script src="js/visualizeHelper.js"></script>
 
-	<script src="http://maps.google.com/maps/api/js?sensor=false" 
-          type="text/javascript"></script>
-
 	<script type="text/javascript">
-	
-	$(window).load(function () {
-	    BIF.init({
-	        domain: 'http://localhost:8080/jasperserver-pro',
-	        username: 'jasperadmin',
-	        password: 'jasperadmin',
-	        mods: ['reports']
-	    }, function (Reports) {
-	        myReport = Reports.open({
-	            uri: '/public/Samples/VisualizeJS/StatesJFC',
-	            container: document.getElementById('states'),
-	            onReportFinished: function () {
-	                $('#overlay').hide();
-	                updateState('CA');
-	            }
-	        });
-	    });
-	});
+        var masterReport;
+        var slaveReport;
 
-	function updateState(stateName) {
-	    BIF.init({
-	        domain: 'http://localhost:8080/jasperserver-pro',
-	        username: 'jasperadmin',
-	        password: 'jasperadmin',
-	        mods: ['reports']
-	    }, function (Reports) {
-	        myReport = Reports.open({
-	            uri: '/public/Samples/VisualizeJS/Cities',
-	            container: document.getElementById('cities'),
-	            inputParameters: {
-	                state: stateName
-	            },
-	            onReportFinished: function () {
-	                $('#overlay').hide();
-	            }
-	        });
+        function initializeReports() {
+            var report_uri = '/public/Samples/VisualizeJS/StatesJFC';
+
+            masterReport = runReport(report_uri, 'states');
+            slaveReport = runReport('/public/Samples/VisualizeJS/Cities', 'cities');
+            updateState('CA');
+        }
+
+        $(window).load(function () {
+            BIF.init({
+                domain: 'http://localhost:8080/jasperserver-pro',
+                username: 'jasperadmin',
+                password: 'jasperadmin',
+                mods: ['reports']
+            }, function (Reports) {
+                jsReportUnit = Reports;
+                initializeReports();
+            });
 	    });
-	};
+
+        // Update Slave report with the passed State Parameter
+        function updateState(stateName) {
+            slaveReport.run({state: stateName });
+        };
+
 	</script>
     <style type="text/css">
 	    #repo h3 {
