@@ -40,12 +40,10 @@
 	<script src="js/visualizeHelper.js"></script>
 
 	<script type="text/javascript">
-	
+
 	$(window).load(function () {
 	    BIF.init({
 	        domain: 'http://localhost:8080/jasperserver-pro',
-	        username: 'jasperadmin',
-	        password: 'jasperadmin',
 	        mods: ['reports']
 	    }, function (Reports) {
 	        myReport = Reports.open({
@@ -147,7 +145,7 @@ runReport = function(obj){
 							
 						</ul>
 					</li>
-					<li><a href="about.html">About</a></li>
+					<li><a href="http://github.com/marianol/JasperEmbedSample">About</a></li>
 				</ul>
 			</div>
 	</div>

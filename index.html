@@ -39,10 +39,16 @@
 
 	<script type="text/JavaScript">
 
+  	$.ajax({
+                url: 'http://localhost:8080/jasperserver-pro/rest/login?',
+                type: 'GET',
+                data: 'j_username=jasperadmin&j_password=jasperadmin',
+                dataType: 'jsonp',
+                crossDomain: true,
+        });
+
 	    BIF.init({    
 	        domain: 'http://localhost:8080/jasperserver-pro',    
-	        username: 'jasperadmin',    
-	        password: 'jasperadmin',      
 	        mods: ['repository', 'reports']
 	        }, function(Repo, Reports) { 
 	            jsRepository = Repo;
@@ -108,7 +114,7 @@
 							<li><a href="reportPopup.html">Report Popup</a></li>
 						</ul>
 					</li>
-					<li><a href="about.html">About</a></li>
+					<li><a href="http://github.com/marianol/JasperEmbedSample">About</a></li>
 				</ul>
 			</div>
 	</div>
