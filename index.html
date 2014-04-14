@@ -30,7 +30,7 @@
 	<link href="css/styles.css" rel="stylesheet">
 	
 
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="js/jquery.min.js"></script>
 	
 	<script src="js/bootstrap.js"></script>
 	<script src="js/require.js"></script>
@@ -39,10 +39,16 @@
 
 	<script type="text/JavaScript">
 
+  	$.ajax({
+                url: 'http://localhost:8080/jasperserver-pro/rest/login?',
+                type: 'GET',
+                data: 'j_username=jasperadmin&j_password=jasperadmin',
+                dataType: 'jsonp',
+                crossDomain: true,
+        });
+
 	    BIF.init({    
 	        domain: 'http://localhost:8080/jasperserver-pro',    
-	        username: 'jasperadmin',    
-	        password: 'jasperadmin',      
 	        mods: ['repository', 'reports']
 	        }, function(Repo, Reports) { 
 	            jsRepository = Repo;
@@ -106,10 +112,9 @@
 							<li><a href="reportInteraction.html">External Report Interaction</a></li>
 							<li><a href="reportInteraction2.html">Report Interaction</a></li>
 							<li><a href="reportPopup.html">Report Popup</a></li>
-							<li><a href="dashboard.html">Dashboard</a></li>
 						</ul>
 					</li>
-					<li><a href="about.html">About</a></li>
+					<li><a href="http://github.com/marianol/JasperEmbedSample">About</a></li>
 				</ul>
 			</div>
 	</div>
