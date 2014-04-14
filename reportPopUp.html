@@ -5,7 +5,7 @@
  * 
  * ========================================================================
  * Copyright 2014 
- * Author: Ernesto 0ngaro
+ * Author: Gene Arnold, Mariano Luna
  *
  * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
  *
@@ -24,26 +24,23 @@
 
 <html lang="en">
 <head>
-	<title>Report Interaction - JRS Embedded Demo</title>
+	<title>Report Popup - JRS Embedded Demo</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
 	
-
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/smoothness/jquery-ui.css" />
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/smoothness/jquery-ui.css" />
-	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
-	
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+
 	<script src="js/bootstrap.js"></script>
 
 	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
 	<script src="js/visualizeHelper.js"></script>
 
-	<script src="http://maps.google.com/maps/api/js?sensor=false" 
-          type="text/javascript"></script>
-
 	<script type="text/javascript">
-	
+    $('#mainprogressbar' ).progressbar({value: false});
+    $('#mainprogressbar').show();
 	$(window).load(function () {
 	    BIF.init({
 	        domain: 'http://localhost:8080/jasperserver-pro',
@@ -51,58 +48,55 @@
 	        password: 'jasperadmin',
 	        mods: ['reports']
 	    }, function (Reports) {
-	        myReport = Reports.open({
+	    	jsReportUnit = Reports
+	        myReport = jsReportUnit.open({
 	            uri: '/public/Samples/VisualizeJS/AccountList',
 	            container: document.getElementById('parent'),
 	            onReportFinished: function () {
-	                $('#overlay').hide();
-	                updateState('CA');
+	                //$('#mainprogressbar').hide();
 	            }
 	        });
 	    });
 	});
 
-/////////////////////////////////////////////////////////////////
-//Code created by Gene Arnold for javascript drill down feature//
 
-//The following two lines of code are to get jQuery to work without conflicts and loading the visualize.js library
-var $j = jQuery.noConflict();
-$j.getScript("http://localhost:8080/jasperserver-pro/bif/visualize.js");
+// Code handling for javascript drill down feature
 
 runReport = function(obj){
     
     //Creating a report object to pass into visualize.js
     var objReport = new Object();
     objReport.uri = obj.reportDetails.reportURI;
-    objReport.container = $j("#report");
+    objReport.container = $("#report");
     objReport.inputParameters = obj.reportDetails.inputParameters;
+    objReport.onReportFinished =  function () { $('#progressbar').hide(); };
 
     //Setting up jquery dialog box and loading it into window
     //Setting the report div to "Report is Loading" and visualize.js will change that to report
     var report_Title = obj.reportDetails.reportTitle;
-    $j("#dialog").dialog({
+    $("#dialog").dialog({
       	height: "auto", 
-	width: "auto", 
-	title: report_Title,
-      	autoOpen: true,
-      	show: {
-        	effect: "blind",
-        	duration: 10
-      	      },
-      hide: {
-        effect: "clip",
-        duration: 1000
+		width: "auto", 
+		minWidth: 300,
+		title: report_Title,
+	      	autoOpen: true,
+	      	show: {
+	        	effect: "blind",
+	        	duration: 10
+	      	      },
+	      	hide: {
+	        	effect: "clip",
+	        	duration: 1000
       }
     });
-//    $j("#report").text("Report is Loading");
+    //$("#report").text("Loading...");
+    $( "#progressbar" ).progressbar({
+      value: false
+    });
+    $('#progressbar').show();
 
     //Actual building and loading of JasperReport via javascript
-    BIF.init({
-        domain: 'http://localhost:8080/jasperserver-pro',
-        mods: ['reports']
-    }, function(Reports) {
-        mReport = Reports.open(objReport);
-    });
+    jsReportUnit.open(objReport);
 
 };
 	</script>
@@ -125,6 +119,28 @@ runReport = function(obj){
 		    overflow: scroll;
 		    height: 400px;
 			}
+		#progressbar .ui-progressbar-value {
+    		background-color: #5C9CCC;
+    		position: relative;
+  		}
+  		#progressbar { 
+  			width: 400px;
+  			height: 15px;
+  		}
+  		#mainprogressbar { 
+  			width: 400px;
+  			height: 10px;
+  		}
+  		#progressbar .ui-progressbar-value {
+    		background-color: #5C9CCC;
+  		}
+		#progressbar .progress-label {
+		    position: absolute;
+		    left: 50%;
+		    top: 2px;
+		    font-weight: bold;
+		    text-shadow: 1px 1px 0 #fff;
+		}
 	</style>
 </head>
 <body onLoad="">
@@ -162,10 +178,14 @@ runReport = function(obj){
 
 <div class="col-md-6">
 			<h3><a href="#">Store Sales</a></h3>
+			
+			<div id="mainprogressbar"></div>
 			<div id="parent"></div>
     	</div>
 
 <div id="dialog" title="Basic dialog">
+	
+	<div id="progressbar"><div class="progress-label">Loading...</div></div>
 	<div id="report"></div>
 </div>
 
