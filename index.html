@@ -35,75 +35,51 @@
 	<script src="js/bootstrap.js"></script>
 	<script src="js/require.js"></script>
     <script type='text/javascript' src="http://build-master.jaspersoft.com:7580/jrs-pro-feature-amber-embedded-report/client/visualize.js"></script>
+	<script src="js/visualizeHelper.js"></script>
 
 	<script type="text/JavaScript">
+        var uri_a = '/public/Samples/Reports/2_Sales_Mix_by_Demographic_Report';
+        var uri_b = '/public/Samples/Reports/1._Geographic_Results_by_Segment_Report';
+        var report_one;
+        var report_two;
 
-    /*
-    Visualize.js Common config
-    Full Example:
-    myConfig = {
-         auth: {
-         name: "jasperadmin",
-         password: "jasperadmin",
-         organization:"organization_1",
-         locale: "en",
-         timezone: "Europe/Helsinki"
-         }
-     }
-    */
-    jrsConfig =  {
-        auth: {
-            name: "jasperadmin",
-            password: "jasperadmin",
-            organization: "organization_1"
+        // Get my Client Object
+        /*
+         Tried deferred like this:
+         visualize().done(function(v){
+         JRSClient = v;
+         }).fail(function(err){
+         alert(err.message);
+         });
+         but looks like is not yet implemented, so i went ahead with the callback..
+         */
+        visualize(function(v){
+            //'v' it's a client to JRS instance under the config set by visualize.config();
+            JRSClient = v;
+            initialize();
+        });
+
+        // Used an init function because was not able to use the deferred method above...
+        function initialize() {
+
+            // Initialize the 2 divs with the predefined reports
+            report_one = renderReport(uri_a, "#report1", JRSClient);
+            report_two = renderReport(uri_b, "#report2", JRSClient);
+
+            // Populate the repository list
+            JRSClient.resourcesSearch({
+                    // server: serverUrl,
+                    folderUri:"/public/Samples/Reports",
+                    recursive:false,
+                    success:listRepository,
+                    error:function (err) {
+                        alert(err);
+                    }
+                });
         }
-    };
 
-    var JRSClient;
-    var uri_a = '/public/Samples/Reports/2_Sales_Mix_by_Demographic_Report';
-    var uri_b = '/public/Samples/Reports/1._Geographic_Results_by_Segment_Report';
-    var report_one;
-    var report_two;
+    // utility functions moved to visualizeHelper.js
 
-    // Pass config to Visualize
-    visualize.config(jrsConfig);
-
-    // Get my Client Object
-    /*
-     Tried deferred like this:
-     visualize().done(function(v){
-     JRSClient = v;
-     }).fail(function(err){
-     alert(err.message);
-     });
-     but looks like is not yet implemented, so i went ahead with the callback..
-     */
-    visualize(function(v){
-        //'v' it's a client to JRS instance under the config set by visualize.config();
-        JRSClient = v;
-        initialize();
-    });
-
-    // Used an init function because was not able to use the deferred method above...
-    function initialize() {
-
-        // Initialize the 2 divs with the predefined reports
-        report_one = renderReport(uri_a, "#report1", JRSClient);
-        report_two = renderReport(uri_b, "#report2", JRSClient);
-
-        // Populate the repository list
-        JRSClient.resourcesSearch({
-                // server: serverUrl,
-                folderUri:"/public/Samples/Reports",
-                recursive:false,
-                success:listRepository,
-                error:function (err) {
-                    alert(err);
-                }
-            });
-    }
-
-    // utility functions
     // Repo Lister
     function listRepository(results) {
 
@@ -115,19 +91,6 @@
                             + '<button id="buttong"  onclick="renderReport(\'' + this.uri + '\', \'#report2\', JRSClient )" >RUN in Two</button>'
                             + '</td></tr>');
                 });
-    }
-
-
-    //create and render report to specific container
-    function renderReport(uri, container, v) {
-        return v.report({
-            resource: uri,
-            container: container,
-            error: function(err) {
-                alert(err.message);
-            }
-        });
-
     }
 
 

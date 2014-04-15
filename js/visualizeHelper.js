@@ -1,9 +1,9 @@
 /*
  * ========================================================================
- * visualizeHelper.js : v0.0.2
+ * visualizeHelper.js : v0.1.0
  * 
  * ========================================================================
- * Copyright 2013 
+ * Copyright 2014
  * Author: Mariano Luna (https://github.com/marianol)
  *
  * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
@@ -21,61 +21,54 @@
  * ======================================================================== 
  */
 
-// Initialize Repor and Report objects
-var jsRepository;
-var jsReportUnit;
+// Initialize Visualize.js config and JRSClient object placeholder
+/*
+ Visualize.js Common config
+ Full Example:
+ myConfig = {
+     auth: {
+         name: "jasperadmin",
+         password: "jasperadmin",
+         organization:"organization_1",
+         locale: "en",
+         timezone: "Europe/Helsinki"
+     }
+ }
+ */
+jrsConfig =  {
+    auth: {
+        name: "jasperadmin",
+        password: "jasperadmin",
+        organization: "organization_1"
+    }
+};
 
+var JRSClient; // Will be storing my JRS Client object here :)
+
+
+// Pass config to Visualize
+visualize.config(jrsConfig);
+
+// Create and render report to specific container
+/**
+ * Create and run report component with provided properties
+ * @param {string} uri   - report properties
+ * @param {string} container - div name to render the report
+ * @param {Object} v - a visualize.js Jasper Client object (JrsClient)
+ * @returns {Report} report - instance of Report generated
+ */
+function renderReport(uri, container, v) {
+    return v.report({
+        resource: uri,
+        container: container,
+        error: function(err) {
+            alert(err.message);
+        }
+    });
+
+}
+
+// Not sure if I'm still using this one
 function setOverlay(divID) {
     $(divID).html( '<div id="overlay" class="fill"><div id="ajax-icon" class="fill"><i class="icon-spinner icon-spin icon-3x"></i><p>Loading...</p></div>');
 }
-
-function runReport(reportURI, targetDiv)
-    {
-
-      //alert(inputVal);
-      $('#overlay').show();
-      //$('#container')
-      var theReport = {
-                uri : reportURI ,
-                container : document.getElementById(targetDiv),
-                onReportFinished: function(status) {
-                    $('#overlay').hide();
-                    if ( typeof ReportFinishedCallback == 'function' ) {
-                        ReportFinishedCallback(status);
-                    }
-                    theReport.gotoPage(0);
-                }
-            };
-       var mReport = jsReportUnit.open(theReport);
-       return mReport;
-    };
-
-
-function RepoList(path) 
-    {
-        jsRepository.ls({type: 'reportUnit', limit: 100}).then(
-            function(data) {
-                $.each(data, function() {
-                    $('#reportsList').append('<tr><td>' + this.label + '</td><td>' + this.creationDate 
-                        + '</td>' 
-                        + '<td>'
-                        + '<button id="buttong"  onclick="runReport(\'' + this.uri + '\', \'report1\')" >RUN in One</button>&nbsp;&nbsp;' 
-                        + '<button id="buttong"  onclick="runReport(\'' + this.uri + '\', \'report2\')" >RUN in Two</button>' 
-                        + '</td></tr>');   
-                });
-            });
-       
-        /*
-        + ' - ' + this.uri 
-        Response Sample:
-        creationDate: "2013-10-29 12:20:10"
-        description: "Sample HTML5 multi-axis column chart from Domain showing Sales, Units, and Sales/Square Feet by Country and Store Type with various filters"
-        label: "01. Geographic Results by Segment Report"
-        permissionMask: 1
-        resourceType: "reportUnit"
-        updateDate: "2013-08-21 22:42:28"
-        uri: "/public/Samples/Reports/1._Geographic_Results_by_Segment_Report"
-        version: 0
-        */
-     
-    }
