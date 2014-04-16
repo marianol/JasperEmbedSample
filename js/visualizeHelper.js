@@ -49,7 +49,6 @@ var JRSClient; // Will be storing my JRS Client object here :)
 // Pass config to Visualize
 visualize.config(jrsConfig);
 
-// Create and render report to specific container
 /**
  * Create and run report component with provided properties
  * @param {string} uri   - report properties
@@ -66,6 +65,75 @@ function renderReport(uri, container, v) {
         }
     });
 
+}
+
+/**
+ * Render standard Jasper Input Controls IC given the IC object
+ * @todo extend this to handle all available IC Types
+ *
+ * @param {Options} inputParameters   -  inputControls instance
+ *
+ */
+function renderStandardIC(inputParameters) {
+    // Only working with single and multi selects now.
+    $.each( inputParameters, function( id, inputControl ) {
+        console.log("IC # " + id + "Label" + inputControl.label + " Type: " + inputControl.type);
+
+        var element;
+        var elementProperties;
+
+        $('#inputName').html(inputControl.label);
+        /* Possible JRS IC Types:
+         •	bool
+         •	singleSelect
+         •	singleSelectRadio
+         •	multiSelectCheckbox
+         •	multiSelect
+         •	singleValue
+         •	singleValueText
+         •	singleValueNumber
+         •	singleValueDate
+         •	singleValueDatetime
+         •	singleValueTime
+         */
+        switch(inputControl.type)
+        {
+            case 'singleSelect':
+            case 'singleSelectRadio':
+                element = '<select/>';
+                elementProperties = {
+                    'id': inputControl.id,
+                    'type': 'select-one'
+                }
+                break;
+            case 'multiSelectCheckbox':
+            case 'multiSelect':
+                element = '<select/>'
+                elementProperties = {
+                    'id': inputControl.id,
+                    'type': 'select-multiple',
+                    'multiple' : 'multiple'
+                }
+                break;
+            default:
+                element = '<input/>'
+                elementProperties = {
+                    'id': inputControl.id,
+                    'type': inputControl.type
+                }
+        }
+        var sel = $(element , elementProperties ).appendTo( '#inputOptions' );
+
+        // @todo This should change to handle all types of Input Contols
+        $.each(inputControl.state.options, function() {
+            sel.append(
+                        $( '<option />', {
+                            'value': this.value,
+                            'text': this.label
+                        } )
+                    );
+        });
+    });
 }
 
 // Not sure if I'm still using this one
