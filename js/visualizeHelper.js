@@ -60,10 +60,17 @@ function renderReport(uri, container, v) {
     return v.report({
         resource: uri,
         container: container,
+        events: {
+            changeTotalPages: function(totalPages) {
+                if ( typeof reportChangeTotalPages == 'function' ) {
+                    reportChangeTotalPages(totalPages);
+                }
+            }
+        },
         error: function(err) {
-            alert(err.message);
-        }
-    });
+                alert(err.message);
+            }
+        });
 
 }
 
@@ -77,7 +84,7 @@ function renderReport(uri, container, v) {
 function renderStandardIC(inputParameters) {
     // Only working with single and multi selects now.
     $.each( inputParameters, function( id, inputControl ) {
-        console.log("IC # " + id + "Label" + inputControl.label + " Type: " + inputControl.type);
+        // console.log("IC # " + id + " - Label" + inputControl.label + " - Type: " + inputControl.type);
 
         var element;
         var elementProperties;

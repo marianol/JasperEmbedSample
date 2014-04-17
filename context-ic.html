@@ -49,19 +49,6 @@
             initialize();
         });
 
-
-/* Old code
-       function ReportFinishedCallback(status) {
-            // this function if is defined; is called by visualize helper runReport() when the report has finished.
-            $('#total').html(status.totalPages);
-            maxPageIndex = status.totalPages - 1;
-            $('#prev').hide();
-            if (currentPageIndex == maxPageIndex)  {
-                $('#next').hide();
-            }
-        }*/
-
-
 	    function initialize() {
 	    	var reportUri = '/public/Samples/Reports/ProfitDetailReport';
 
@@ -71,10 +58,11 @@
             myReport.events({
                 changeTotalPages: function(totalPages) {
                     console.log("Total Pages: " + totalPages);
-                    $('#total').html(total);
+                    maxPageIndex = totalPages;
+                    $('#total').html(maxPageIndex);
+                    $('#previousPage').hide();
                 }
             });
-            console.log("Total Pages from report.totalPages : " + myReport.totalPages;);
 
             var ic = JRSClient.inputControls({
                     resource: reportUri,
@@ -106,22 +94,32 @@
              Setup page navigation buttons
              */
             $("#previousPage").click(function() {
-                var currentPage = myReport.pages() || 1;
-                $('#current').html(currentPageIndex--);
-                console.log(myReport.pages());
+                $('#nextPage').show();
+
                 myReport
-                        .pages(--currentPage)
+                        .pages(--currentPageIndex)
                         .run()
                         .fail(function(err) { alert(err); });
+                $('#current').html(currentPageIndex);
+                if (currentPageIndex <= 1)  {
+                    $('#previousPage').hide();
+                } else {
+                    $('#previousPage').show();
+                }
             });
 
             $("#nextPage").click(function() {
-                var currentPage = myReport.pages() || 1;
-                $('#current').html(currentPageIndex++);
+                $('#previousPage').show();
                 myReport
-                        .pages(++currentPage)
+                        .pages(++currentPageIndex)
                         .run()
                         .fail(function(err) { alert(err); });
+                $('#current').html(currentPageIndex);
+                if (currentPageIndex == maxPageIndex)  {
+                    $('#nextPage').hide();
+                } else {
+                    $('#nextPage').show();
+                }
             });
         }
 
@@ -139,6 +137,7 @@
             currentPageIndex = 1;
             myReport.params(parameters).run();
         }
+
 
 	    
 	</script>
@@ -196,6 +195,7 @@
 	<div class="container" style="width:100%; ">
 	<div class="row">
 		<div class="col-md-12">
+            <h3><a href="#">Profit Detail</a></h3>
             <div class="btn-toolbar" role="toolbar">
             <button type="buttonDrinks" class="btn btn-default btn-lg" onclick="passControls('ProductFamily','Drink');">
                 <span class="glyphicon glyphicon-tint"></span> Drinks
@@ -209,20 +209,14 @@
 	<div class="row">
 
 		<div class="col-md-8">
-			<h3><a href="#">Profit Detail</a></h3>
-			<div id="report1" class="fill"></div>
-            <div>Page <span id="current">1</span> / <span id="total"></span></div>
-            <ul class="pager">
+             <ul class="pager">
                 <li class="previous"><a href="#" id="previousPage">&larr; Previous</a></li>
+                <li>Page <span id="current">1</span> of  <span id="total"></span></li>
                 <li class="next"><a href="#" id="nextPage">Next &rarr;</a></li>
             </ul>
+            <div id="report1" class="fill"></div>
 
-
-    				<div id="ajax-icon" class="fill">
-        				<i class="icon-spinner icon-spin icon-3x"></i> 
-        				<p>Loading...</p>
-    				</div>
-		</div>
+        </div>
         <div class="col-md-1">
 
         </div>
