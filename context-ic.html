@@ -39,7 +39,8 @@
 
 	<script type="text/JavaScript">
 		var myReport;
-        var currentPageIndex = 0;
+        var myReportIC;
+        var currentPageIndex = 1;
         var maxPageIndex = 0;
 
         // Get my Client Object
@@ -66,11 +67,21 @@
 
 	    	myReport = renderReport(reportUri, '#report1', JRSClient);
 
+            // @todo: CHeck this part... I don't see this working
+            myReport.events({
+                changeTotalPages: function(totalPages) {
+                    console.log("Total Pages: " + totalPages);
+                    $('#total').html(total);
+                }
+            });
+            myReport.totalPages;
+
             var ic = JRSClient.inputControls({
                     resource: reportUri,
                     success: function(data) {
                         renderStandardIC(data);
-                        // console.log(data); // [{ "id":"Cascading_name_single_select" "options": [{ .
+                        myReportIC = data;
+                        // console.log(data);
                     }
                 });
 
@@ -97,15 +108,12 @@
             /*
              Setup page navigation buttons
              */
-            myReport.events({
-                changeTotalPages: function(totalPages) {
-                    console.log(totalPages);
-                    $('#current').html(total);
-                }
-            });
+
+
             $("#previousPage").click(function() {
                 var currentPage = myReport.pages() || 1;
                 $('#current').html(currentPageIndex--);
+                console.log(myReport.pages());
                 myReport
                         .pages(--currentPage)
                         .run()
@@ -122,14 +130,19 @@
             });
         }
 
-        function passControls(paramValue) {
-            var myParameters;
+        /*
+        * Re run the Report with a changed Input Parameter
+        *
+        * @param {string} inputControlId - ID of the input parameter to be changed
+        * @param {Object} paramValue - new value to be passed
+         */
+        function passControls(inputControlId, paramValue) {
+            var parameters = {};
 
-            myParameters = {
-                ProductFamily: paramValue
-            };
-            currentPageIndex = 0;
-            myReport.run(myParameters)  ;
+            parameters[inputControlId] = [ paramValue ];
+            console.log(parameters);
+            currentPageIndex = 1;
+            myReport.params(parameters).run();
         }
 
 	    
@@ -188,8 +201,14 @@
 	<div class="container" style="width:100%; ">
 	<div class="row">
 		<div class="col-md-12">
-			<button id="buttonDrinks"  onclick="passControls('Drink');" >Show Drinks Only</button>
-
+            <div class="btn-toolbar" role="toolbar">
+            <button type="buttonDrinks" class="btn btn-default btn-lg" onclick="passControls('ProductFamily','Drink');">
+                <span class="glyphicon glyphicon-tint"></span> Drinks
+            </button>
+            <button type="buttonFood" class="btn btn-default btn-lg" onclick="passControls('ProductFamily','Food');">
+                <span class="glyphicon glyphicon-cutlery"></span> Food
+            </button>
+            </div>
 		</div>
 	</div>
 	<div class="row">
@@ -197,15 +216,13 @@
 		<div class="col-md-8">
 			<h3><a href="#">Profit Detail</a></h3>
 			<div id="report1" class="fill"></div>
-            <div id="pager">
-                <table>
-                <tr>
-                    <td><button id="previousPage">Prev</button></td>
-                    <td>Page <span id="current">1</span> / <span id="total"></span></td>
-                    <td><button id="nextPage">Next</button></td>
-                </tr>
-            </table>
-            </div>
+            <div>Page <span id="current">1</span> / <span id="total"></span></div>
+            <ul class="pager">
+                <li class="previous"><a href="#" id="previousPage">&larr; Previous</a></li>
+                <li class="next"><a href="#" id="nextPage">Next &rarr;</a></li>
+            </ul>
+
+
     				<div id="ajax-icon" class="fill">
         				<i class="icon-spinner icon-spin icon-3x"></i> 
         				<p>Loading...</p>
@@ -215,7 +232,7 @@
 
         </div>
 		<div class="col-md-3">
-			<h4>Select your filters</h4>
+			<h4>Pick your filters</h4>
             <p><strong> <span id="inputName"></span> :</strong></p>
             <div id="inputOptions"></div>
             <button id="btn">Run Report</button>
