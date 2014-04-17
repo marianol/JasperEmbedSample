@@ -45,13 +45,13 @@
 
         // Get my Client Object
         visualize(function(v){
-            //'v' it's a client to JRS instance under the config set by visualize.config();
             JRSClient = v;
             initialize();
         });
 
 
-        function ReportFinishedCallback(status) {
+/* Old code
+       function ReportFinishedCallback(status) {
             // this function if is defined; is called by visualize helper runReport() when the report has finished.
             $('#total').html(status.totalPages);
             maxPageIndex = status.totalPages - 1;
@@ -59,7 +59,7 @@
             if (currentPageIndex == maxPageIndex)  {
                 $('#next').hide();
             }
-        }
+        }*/
 
 
 	    function initialize() {
@@ -74,14 +74,13 @@
                     $('#total').html(total);
                 }
             });
-            myReport.totalPages;
+            console.log("Total Pages from report.totalPages : " + myReport.totalPages;);
 
             var ic = JRSClient.inputControls({
                     resource: reportUri,
                     success: function(data) {
                         renderStandardIC(data);
-                        myReportIC = data;
-                        // console.log(data);
+                        myReportIC = data; // Store this just in case :)
                     }
                 });
 
@@ -99,17 +98,13 @@
                     parameters[$(itm).attr('id')] = $(itm).val();
                 });
                 // console.log(parameters);
-
-                // Re run the report with the new params
-                myReport.params(parameters).run();
+                myReport.params(parameters).run(); // Re run the report with the new params
             });
 
 
             /*
              Setup page navigation buttons
              */
-
-
             $("#previousPage").click(function() {
                 var currentPage = myReport.pages() || 1;
                 $('#current').html(currentPageIndex--);
