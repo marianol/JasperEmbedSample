@@ -103,6 +103,7 @@ function renderStandardIC(inputParameters) {
                 element = '<select/>';
                 elementProperties = {
                     'id': inputControl.id,
+                    'name': inputControl.id,
                     'type': 'select-one'
                 }
                 break;
@@ -111,6 +112,7 @@ function renderStandardIC(inputParameters) {
                 element = '<select/>'
                 elementProperties = {
                     'id': inputControl.id,
+                    'name': inputControl.id,
                     'type': 'select-multiple',
                     'multiple' : 'multiple'
                 }
@@ -124,7 +126,7 @@ function renderStandardIC(inputParameters) {
         }
         var sel = $(element , elementProperties ).appendTo( '#inputOptions' );
 
-        // @todo This should change to handle all types of Input Contols
+        // @todo This should change to handle all types of Input Controls
         $.each(inputControl.state.options, function() {
             sel.append(
                         $( '<option />', {

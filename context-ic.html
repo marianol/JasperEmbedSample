@@ -4,7 +4,7 @@
  * context-ic.html
  * 
  * ========================================================================
- * Copyright 2013 
+ * Copyright 2014
  * Author: Mariano Luna
  *
  * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
@@ -31,16 +31,24 @@
 	
 
 	<script src="js/jquery.min.js"></script>
-	
 	<script src="js/bootstrap.js"></script>
 	<script src="js/require.js"></script>
-	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
-	<script src="js/visualizeHelper.js"></script>
+
+    <script src="http://build-master.jaspersoft.com:7580/jrs-pro-feature-amber-embedded-report/client/visualize.js"></script>
+    <script src="js/visualizeHelper.js"></script>
 
 	<script type="text/JavaScript">
 		var myReport;
         var currentPageIndex = 0;
         var maxPageIndex = 0;
+
+        // Get my Client Object
+        visualize(function(v){
+            //'v' it's a client to JRS instance under the config set by visualize.config();
+            JRSClient = v;
+            initialize();
+        });
+
 
         function ReportFinishedCallback(status) {
             // this function if is defined; is called by visualize helper runReport() when the report has finished.
@@ -52,70 +60,65 @@
             }
         }
 
-	    BIF.init({    
-	        domain: 'http://localhost:8080/jasperserver-pro',    
-	        mods: ['reports']
-	        }, function(Reports) {
-	            jsReportUnit = Reports;
-	            initialize();
-	        }
-	    );
-
 
 	    function initialize() {
 	    	var reportUri = '/public/Samples/Reports/ProfitDetailReport';
 
-	    	myReport = runReport(reportUri, 'report1');
+	    	myReport = renderReport(reportUri, '#report1', JRSClient);
 
-            myReport.rdy.then(function() {
-                myReport.getInputParameters().then(function() {
-                    setupOptions(myReport.inputParameters);
-                    $('#btn').click(function() {
-                        $('#overlay').show();
-                        myReport.run({
-                            ProductFamily: $('#inputOptions').val()
-                        });
-                    });
+            var ic = JRSClient.inputControls({
+                    resource: reportUri,
+                    success: function(data) {
+                        renderStandardIC(data);
+                        // console.log(data); // [{ "id":"Cascading_name_single_select" "options": [{ .
+                    }
                 });
 
+            /*
+             Wire the Report to the Rendered IC
+             */
+            $('#btn').click(function() {
+                // Iterate trough the IC's in the Div
+                var parameters = {};
+                $('#inputOptions').children().each(function(idx, itm) {
+                    /*
+                    console.log($(itm).attr('id'));
+                    console.log($(itm).val());
+                    */
+                    parameters[$(itm).attr('id')] = $(itm).val();
+                });
+                // console.log(parameters);
+
+                // Re run the report with the new params
+                myReport.params(parameters).run();
             });
+
 
             /*
              Setup page navigation buttons
              */
-            $('#next').on('click',function() {
-
-                currentPageIndex++;
-                $('#current').html(currentPageIndex+1);
-                myReport.gotoPage(currentPageIndex);
-                if (currentPageIndex == maxPageIndex)  {
-                    $('#next').hide();
-                    $('#prev').show();
-                } else {
-                    $('#prev').show();
-                    $('#next').show();
-                }
-
-            });
-
-            $('#prev').on('click',function() {
-                currentPageIndex--;
-                $('#current').html(currentPageIndex+1);
-                myReport.gotoPage(currentPageIndex);
-                if (currentPageIndex == 0)  {
-                    $('#prev').hide();
-                    $('#next').show();
-                } else {
-                    $('#next').show();
-                    $('#prev').show();
+            myReport.events({
+                changeTotalPages: function(totalPages) {
+                    console.log(totalPages);
+                    $('#current').html(total);
                 }
             });
-		}
+            $("#previousPage").click(function() {
+                var currentPage = myReport.pages() || 1;
+                $('#current').html(currentPageIndex--);
+                myReport
+                        .pages(--currentPage)
+                        .run()
+                        .fail(function(err) { alert(err); });
+            });
 
-        function setupOptions(inputParameters) {
-            $('#inputName').html(inputParameters[0].label);
-            $.each(inputParameters[0].state.options, function() {
-                $('#inputOptions').append('<option value="'+this.value+'">'+this.label+'</option>');
+            $("#nextPage").click(function() {
+                var currentPage = myReport.pages() || 1;
+                $('#current').html(currentPageIndex++);
+                myReport
+                        .pages(++currentPage)
+                        .run()
+                        .fail(function(err) { alert(err); });
             });
         }
 
@@ -197,9 +200,9 @@
             <div id="pager">
                 <table>
                 <tr>
-                    <td><button id="prev">Prev</button></td>
+                    <td><button id="previousPage">Prev</button></td>
                     <td>Page <span id="current">1</span> / <span id="total"></span></td>
-                    <td><button id="next">Next</button></td>
+                    <td><button id="nextPage">Next</button></td>
                 </tr>
             </table>
             </div>
@@ -214,7 +217,7 @@
 		<div class="col-md-3">
 			<h4>Select your filters</h4>
             <p><strong> <span id="inputName"></span> :</strong></p>
-            <select multiple id="inputOptions"></select>
+            <div id="inputOptions"></div>
             <button id="btn">Run Report</button>
 
         </div>
