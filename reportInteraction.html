@@ -25,44 +25,44 @@
 
 <html lang="en">
 <head>
-	<title>Report Interaction - JRS Embedded Demo</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/styles.css" rel="stylesheet">
-	
+	<title>Report External Interaction - JRS Embedded Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/ui-lightness/jquery-ui-1.10.4.custom.min.css" />
 
-	<script src="js/jquery.min.js"></script>
-	
-	<script src="js/bootstrap.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/require.js"></script>
 
-	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
-	<script src="js/visualizeHelper.js"></script>
+    <script src="js/jquery-ui-1.10.4.custom.min.js"></script>
+
+    <script src="http://build-master.jaspersoft.com:7580/jrs-pro-feature-amber-embedded-report/client/visualize.js"></script>
+    <script src="js/visualizeHelper.js"></script>
 
 	<script src="http://maps.google.com/maps/api/js?sensor=false" 
           type="text/javascript"></script>
 
 	<script type="text/JavaScript">
-		var myReport;
+        var myReport;
+        var reportUri = '/public/Samples/VisualizeJS/SalesPerCityReport';
 
-		// Initialize Visualize.js
-	    BIF.init({    
-	        domain: 'http://localhost:8080/jasperserver-pro',    
-	        mods: ['reports']
-	        }, function(Reports) { 
-	            jsReportUnit = Reports;
-	            initializeReports();
-	        }
-	    );
+        // Get my Client Object and render the report.
+        visualize(function(v){
+            JRSClient = v;
+            myReport = renderReport(reportUri, '#report1', JRSClient);
 
-	    // Now using the funtions in visualizeHelper.js 
-	    
-	    function initializeReports() {
-	    	var report_uri = '/public/SalesPerCityReport';
-	    	
-	    	myReport = runReport(report_uri, 'report2');
-		}
-	    
-	</script>
+            myReport.events({
+                changeTotalPages: function(totalPages) {
+                    console.log("Total Pages: " + totalPages);
+                    $('#progressbar').hide();
+                }
+            });
+            $('#progressbar').show();
+        });
+
+    </script>
+
     <style type="text/css">
 	    #repo h3 {
 	        padding: 5px 0;
@@ -82,6 +82,15 @@
 		    overflow: scroll;
 		    height: 400px;
 			}
+        #progressbar .ui-progressbar-value {
+            background-color: #5C9CCC;
+            position: relative;
+        }
+        #progressbar {
+            width: 100%;
+            height: 15px;
+        }
+
 	</style>
 </head>
 <body onLoad="">
@@ -117,56 +126,81 @@
 	<div class="row">
 
 		<div class="col-md-6">
-			<h3><a href="#">Location Map</a></h3>
-				<div id="map" style="width:100%; height:400px;"></div>
-					<script type="text/javascript">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Location Map</h3>
+                </div>
+                <div class="panel-body">
+                    <p>Click on the location to see the sales by day.</p>
 
-					    var locations = [
-					['Alameda',37.765278, -122.240556,5],
-					['Los Angeles',34.052222, -118.242778,4],
-					['San Diego',32.715278, -117.156389,3],
-					['San Francisco',37.775000, -122.418333,2],
-					['Beverly Hills',34.073611, -118.399444,1],
-					];
+                    <div id="map" style="width:100%; height:400px;"></div>
+                    <script type="text/javascript">
+                        // This map will be uses to drive the Input controls of the report in #report1
+
+                        var locations = [
+                            ['Alameda',37.765278, -122.240556,5],
+                            ['Los Angeles',34.052222, -118.242778,4],
+                            ['San Diego',32.715278, -117.156389,3],
+                            ['San Francisco',37.775000, -122.418333,2],
+                            ['Beverly Hills',34.073611, -118.399444,1],
+                        ];
 
 
-					    var map = new google.maps.Map(document.getElementById('map'), {
-					      zoom: 4,
-					      center: new google.maps.LatLng(34.052222, -118.242778),
-					      mapTypeId: google.maps.MapTypeId.ROADMAP
-					    });
+                        var map = new google.maps.Map(document.getElementById('map'), {
+                            zoom: 4,
+                            center: new google.maps.LatLng(34.052222, -118.242778),
+                            mapTypeId: google.maps.MapTypeId.ROADMAP
+                        });
 
-					    var infowindow = new google.maps.InfoWindow();
+                        var infowindow = new google.maps.InfoWindow();
 
-					    var marker, i;
+                        var marker, i;
 
-					    for (i = 0; i < locations.length; i++) {  
-					      marker = new google.maps.Marker({
-					        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-					        map: map
-					      });
+                        for (i = 0; i < locations.length; i++) {
+                            marker = new google.maps.Marker({
+                                position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                                map: map
+                            });
 
-					      google.maps.event.addListener(marker, 'click', (function(marker, i) {
-					        return function() {
-					          infowindow.setContent(locations[i][0]);
-					          myReport.run({store_city_1: locations[i][0]})
-					          infowindow.open(map, marker);
-					        }
-					      })(marker, i));
-					    }
-					  </script>
-    		</div>
+                            google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                                return function() {
+                                    var pickedLocation = locations[i][0];
+                                    infowindow.setContent(pickedLocation);
+                                    $('#progressbar').show();
+                                    // Trigger the report with the new IC value
+                                    myReport.params({ "store_city_1": [ pickedLocation ] }).run();
+                                    infowindow.open(map, marker);
+                                }
+                            })(marker, i));
+                        }
+                    </script>
+                </div>
+                </div>
+            </div>
 
 		<div class="col-md-6">
-			<h3><a href="#">Sales by City</a></h3>
-			<div id="report2"></div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Sales by City</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="progressbar" class="progress progress-striped active">
+                        <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="report1">
+
+                    </div>
+                </div>
+            </div>
+
     	</div>
 	</div>
 
 </div>
-
-	
-
 
 
 </body>
