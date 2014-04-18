@@ -21,9 +21,13 @@
  * ======================================================================== 
  */
 
-// Initialize Visualize.js config and JRSClient object placeholder
+
 /*
- Visualize.js Common config
+ Initialize Visualize.js config and JRSClient object placeholder
+
+ Visualize.js Common config now this can be held here, still each page needs to call the remote visualize.js
+  scripts still have not found a way to parametrize that so is easy to move the sample form a JRS running in
+  a different URL without using awk
  Full Example:
  myConfig = {
      auth: {
