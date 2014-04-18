@@ -60,6 +60,7 @@ function renderReport(uri, container, v) {
     return v.report({
         resource: uri,
         container: container,
+        /* I'll be setting this function as needed on the caller, see context-ic.html as an example
         events: {
             changeTotalPages: function(totalPages) {
                 if ( typeof reportChangeTotalPages == 'function' ) {
@@ -67,6 +68,7 @@ function renderReport(uri, container, v) {
                 }
             }
         },
+        */
         error: function(err) {
                 alert(err.message);
             }
