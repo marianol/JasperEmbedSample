@@ -46,13 +46,78 @@
             JRSClient = v;
             initializeReports();
         });
+
+        // @todo This will need to be moved to the Helper somehow...
+        // I'm not able to bind the link catcher after the fact
+        function renderReportLink(uri, container, v) {
+            return v.report({
+                resource: uri,
+                container: container,
+                linkOptions: {
+                    events: {
+                        "click"  : function(evt, link){
+
+                            // console.log(evt.target); // prints dom elem which represents link in report
+                            // console.log(link); // print link's data look in report data schema
+                            /*
+                            link Object looks like this
+                            for a reference Hyperlink:
+                             Object {
+                                 href: "javascript:updateState('CA')"
+                                 id: "561719435"
+                                 reference: "javascript:updateState('CA')"
+                                 selector: "._jrHyperLink.Reference"
+                                 type: "Reference"
+                                 typeValue: "Reference"
+                             }
+                             And like this for a Report Execution:
+                             Object {
+                             id: "2021149141"
+                                 params: Object {
+                                     _report: "/public/Samples/VisualizeJS/Cities"
+                                     action: "doThisAction"
+                                     reportInstance: "slaveReport"
+                                     store_state: "CA"
+                                     total_sales: "159167.8400"
+                                     }
+                                 selector: "._jrHyperLink.ReportExecution"
+                                 type: "ReportExecution"
+                                 typeValue: "Custom"
+                             }
+                             */
+                            updateState(link.params.store_state);
+                        }
+                    }
+                },
+                error: function(err) {
+                    alert(err.message);
+                }
+            });
+
+        }
+
         function initializeReports() {
             var master = '/public/Samples/VisualizeJS/StatesJFC';
             var slave = '/public/Samples/VisualizeJS/Cities';
 
-            masterReport = renderReport(master, '#states', JRSClient);
+            masterReport = renderReportLink(master, '#states', JRSClient);
             slaveReport = renderReport(slave, '#cities', JRSClient);
             updateState('CA');
+
+            /*
+            // This function is not working if I bind it here, @todo check syntax
+            // For now using renderReportLink() as a workaround
+            masterReport.linkOptions({
+                events: {
+                    "click" : function(evt, link){
+                        console.log('Link Clicked:');
+                        console.log(evt.target); // prints dom elem which represents link in report
+                        console.log(link); // print link's data look in report data schema
+                    }
+                }
+            });
+            */
+
         }
 
         // Update Slave report with the passed State Parameter

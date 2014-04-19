@@ -72,6 +72,16 @@ function renderReport(uri, container, v) {
                 }
             }
         },
+
+        linkOptions: {
+             events: {
+                 "click"  : function(evt, link){
+
+                     console.log(evt.target); // prints dom elem which represents link in report
+                     console.log(link); // print link's data look in report data schema
+                     }
+             }
+         },
         */
         error: function(err) {
                 alert(err.message);
