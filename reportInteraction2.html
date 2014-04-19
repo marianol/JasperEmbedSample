@@ -34,34 +34,34 @@
 	
 	<script src="js/bootstrap.js"></script>
 
-	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
-	<script src="js/visualizeHelper.js"></script>
+    <script src="http://build-master.jaspersoft.com:7580/jrs-pro-feature-amber-embedded-report/client/visualize.js"></script>
+    <script src="js/visualizeHelper.js"></script>
 
 	<script type="text/javascript">
         var masterReport;
         var slaveReport;
 
+        // Get my Client Object
+        visualize(function(v){
+            JRSClient = v;
+            initializeReports();
+        });
         function initializeReports() {
-            var report_uri = '/public/Samples/VisualizeJS/StatesJFC';
+            var master = '/public/Samples/VisualizeJS/StatesJFC';
+            var slave = '/public/Samples/VisualizeJS/Cities';
 
-            masterReport = runReport(report_uri, 'states');
-            slaveReport = runReport('/public/Samples/VisualizeJS/Cities', 'cities');
+            masterReport = renderReport(master, '#states', JRSClient);
+            slaveReport = renderReport(slave, '#cities', JRSClient);
             updateState('CA');
         }
 
-        $(window).load(function () {
-            BIF.init({
-                domain: 'http://localhost:8080/jasperserver-pro',
-                mods: ['reports']
-            }, function (Reports) {
-                jsReportUnit = Reports;
-                initializeReports();
-            });
-	    });
-
         // Update Slave report with the passed State Parameter
         function updateState(stateName) {
-            slaveReport.run({state: stateName });
+            var parameters = {};
+
+            parameters['state'] = [ stateName ];
+            slaveReport.params(parameters).run();
+
         };
 
 	</script>
