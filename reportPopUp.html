@@ -36,7 +36,7 @@
 	
 	<script src="js/bootstrap.js"></script>
 
-    <script src="http://build-master.jaspersoft.com:7580/jrs-pro-feature-amber-embedded-report/client/visualize.js"></script>
+    <script src="http://172.17.10.4:8080/jasperserver-pro-branch/client/visualize.js"></script>
 	<script src="js/visualizeHelper.js"></script>
 
 	<script type="text/javascript">
@@ -62,35 +62,8 @@
                 linkOptions: {
                     events: {
                         "click"  : function(evt, link){
-
-                            console.log(evt.target); // prints dom elem which represents link in report
-                            console.log(link); // print link's data look in report data schema
-                            /*
-                             link Object looks like this
-                             for a reference Hyperlink:
-                             Object {
-                             href: "javascript:updateState('CA')"
-                             id: "561719435"
-                             reference: "javascript:updateState('CA')"
-                             selector: "._jrHyperLink.Reference"
-                             type: "Reference"
-                             typeValue: "Reference"
-                             }
-                             And like this for a Report Execution:
-                             Object {
-                             id: "2021149141"
-                             params: Object {
-                             _report: "/public/Samples/VisualizeJS/Cities"
-                             action: "doThisAction"
-                             reportInstance: "slaveReport"
-                             store_state: "CA"
-                             total_sales: "159167.8400"
-                             }
-                             selector: "._jrHyperLink.ReportExecution"
-                             type: "ReportExecution"
-                             typeValue: "Custom"
-                             }
-                             */
+                            // console.log(evt.target); // prints dom elem which represents link in report
+                            // console.log(link); // print link's data look in report data schema
                             renderSlaveReport(link);
                         }
                     }
@@ -105,14 +78,6 @@
         // Code handling for javascript drill down feature
 
         function renderSlaveReport(hyperlinkObject){
-
-            //Creating a report object to pass into visualize.js
-            var objReport = new Object();
-            objReport.uri = obj.reportDetails.reportURI;
-            objReport.container = $("#report");
-            objReport.inputParameters = obj.reportDetails.inputParameters;
-            objReport.onReportFinished =  function () { $('#progressbar').hide(); };
-
 
             //Setting up jquery dialog box and loading it into window
             //Setting the report div to "Report is Loading" and visualize.js will change that to report
@@ -139,10 +104,30 @@
             });
             $('#progressbar').show();
 
-            //Actual building and loading of JasperReport via javascript
-            myLinkedReport = renderReportLink(hyperlinkObject.params._report, '#report', JRSClient);
+            // Building and loading of JasperReport with the prpoer params
+            var myLinkedReportSettings = {
+                resource: hyperlinkObject.params._report,
+                container: '#report',
+                events: {
+                    reportCompleted: function(status, error) {
+                        if (status === "ready") {
+                            $('#progressbar').hide();
+                        } else if (status === "failed") {
+                            error && alert(error);
+                        }
+                    }
+                },
+                params: hyperlinkObject.params,
+                error: function(err) {
+                    alert(err.message);
+                }
+            };
+            console.log('Report Object: ' );
+            console.log( myLinkedReportSettings );
+            myLinkedReport =  JRSClient.report(myLinkedReportSettings);
 
         };
+
 	</script>
     <style type="text/css">
 	    #repo h3 {
