@@ -31,73 +31,118 @@
 	
 
 	<script src="js/jquery.min.js"></script>
-	<link rel="stylesheet" href="css/jquery-ui.css" />
-	<script src="js/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="css/ui-lightness/jquery-ui-1.10.4.custom.min.css" />
+	<script src="js/jquery-ui-1.10.4.custom.min.js"></script>
 	
 	<script src="js/bootstrap.js"></script>
 
-	<script src="http://localhost:8080/jasperserver-pro/bif/visualize.js"></script>
+    <script src="http://build-master.jaspersoft.com:7580/jrs-pro-feature-amber-embedded-report/client/visualize.js"></script>
 	<script src="js/visualizeHelper.js"></script>
 
 	<script type="text/javascript">
-    $('#mainprogressbar' ).progressbar({value: false});
-    $('#mainprogressbar').show();
-	$(window).load(function () {
-	    BIF.init({
-	        domain: 'http://localhost:8080/jasperserver-pro',
-	        mods: ['reports']
-	    }, function (Reports) {
-	    	jsReportUnit = Reports
-	        myReport = jsReportUnit.open({
-	            uri: '/public/Samples/VisualizeJS/AccountList',
-	            container: document.getElementById('parent'),
-	            onReportFinished: function () {
-	                //$('#mainprogressbar').hide();
-	            }
-	        });
-	    });
-	});
+        var myReport;
+        var myLinkedReport;
+        var masterURI = '/public/Samples/VisualizeJS/AccountList';
+        // $('#mainprogressbar' ).progressbar({value: false});
+        $('#mainprogressbar').show();
+
+        // Get my Client Object
+        visualize(function(v){
+            JRSClient = v;
+
+            myReport = renderReportLink(masterURI, '#parent', JRSClient);
+        });
+
+        // @todo This will need to be moved to the Helper somehow...
+        // I'm not able to bind the link catcher after the fact
+        function renderReportLink(uri, container, v) {
+            return v.report({
+                resource: uri,
+                container: container,
+                linkOptions: {
+                    events: {
+                        "click"  : function(evt, link){
+
+                            console.log(evt.target); // prints dom elem which represents link in report
+                            console.log(link); // print link's data look in report data schema
+                            /*
+                             link Object looks like this
+                             for a reference Hyperlink:
+                             Object {
+                             href: "javascript:updateState('CA')"
+                             id: "561719435"
+                             reference: "javascript:updateState('CA')"
+                             selector: "._jrHyperLink.Reference"
+                             type: "Reference"
+                             typeValue: "Reference"
+                             }
+                             And like this for a Report Execution:
+                             Object {
+                             id: "2021149141"
+                             params: Object {
+                             _report: "/public/Samples/VisualizeJS/Cities"
+                             action: "doThisAction"
+                             reportInstance: "slaveReport"
+                             store_state: "CA"
+                             total_sales: "159167.8400"
+                             }
+                             selector: "._jrHyperLink.ReportExecution"
+                             type: "ReportExecution"
+                             typeValue: "Custom"
+                             }
+                             */
+                            renderSlaveReport(link);
+                        }
+                    }
+                },
+                error: function(err) {
+                    alert(err.message);
+                }
+            });
+
+        }
+
+        // Code handling for javascript drill down feature
+
+        function renderSlaveReport(hyperlinkObject){
+
+            //Creating a report object to pass into visualize.js
+            var objReport = new Object();
+            objReport.uri = obj.reportDetails.reportURI;
+            objReport.container = $("#report");
+            objReport.inputParameters = obj.reportDetails.inputParameters;
+            objReport.onReportFinished =  function () { $('#progressbar').hide(); };
 
 
-// Code handling for javascript drill down feature
+            //Setting up jquery dialog box and loading it into window
+            //Setting the report div to "Report is Loading" and visualize.js will change that to report
+            var report_Title = hyperlinkObject.params.reportTitle;
 
-runReport = function(obj){
-    
-    //Creating a report object to pass into visualize.js
-    var objReport = new Object();
-    objReport.uri = obj.reportDetails.reportURI;
-    objReport.container = $("#report");
-    objReport.inputParameters = obj.reportDetails.inputParameters;
-    objReport.onReportFinished =  function () { $('#progressbar').hide(); };
+            $("#dialog").dialog({
+                height: "auto",
+                width: "auto",
+                minWidth: 300,
+                title: report_Title,
+                    autoOpen: true,
+                    show: {
+                        effect: "blind",
+                        duration: 10
+                          },
+                    hide: {
+                        effect: "clip",
+                        duration: 1000
+              }
+            });
+            //$("#report").text("Loading...");
+            $( "#progressbar" ).progressbar({
+              value: false
+            });
+            $('#progressbar').show();
 
-    //Setting up jquery dialog box and loading it into window
-    //Setting the report div to "Report is Loading" and visualize.js will change that to report
-    var report_Title = obj.reportDetails.reportTitle;
-    $("#dialog").dialog({
-      	height: "auto", 
-		width: "auto", 
-		minWidth: 300,
-		title: report_Title,
-	      	autoOpen: true,
-	      	show: {
-	        	effect: "blind",
-	        	duration: 10
-	      	      },
-	      	hide: {
-	        	effect: "clip",
-	        	duration: 1000
-      }
-    });
-    //$("#report").text("Loading...");
-    $( "#progressbar" ).progressbar({
-      value: false
-    });
-    $('#progressbar').show();
+            //Actual building and loading of JasperReport via javascript
+            myLinkedReport = renderReportLink(hyperlinkObject.params._report, '#report', JRSClient);
 
-    //Actual building and loading of JasperReport via javascript
-    jsReportUnit.open(objReport);
-
-};
+        };
 	</script>
     <style type="text/css">
 	    #repo h3 {
@@ -161,7 +206,7 @@ runReport = function(obj){
 							<li><a href="context-ic.html">Contextual Input Controls</a></li>
 							<li><a href="reportInteraction.html">External Report Interaction</a></li>
 							<li><a href="reportInteraction2.html">Report Interaction</a></li>
-                            <li><a href="reportPopup.html">Report Popup</a></li>
+                            <li><a href="reportPopUp.html">Report Popup</a></li>
 							
 						</ul>
 					</li>
