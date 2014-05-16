@@ -36,13 +36,13 @@
 	
 	<script src="js/bootstrap.js"></script>
 
-    <script src="http://172.17.10.4:8080/jasperserver-pro-branch/client/visualize.js"></script>
+    <script src="http://visualizejs-preview.eng.jaspersoft.com:8080/jasperserver-pro-branch/client/visualize.js"></script>
 	<script src="js/visualizeHelper.js"></script>
 
 	<script type="text/javascript">
         var myReport;
         var myLinkedReport;
-        var masterURI = '/public/Samples/VisualizeJS/AccountList';
+        var masterURI = '/public/Samples/Reports/AccountList';
         // $('#mainprogressbar' ).progressbar({value: false});
         $('#mainprogressbar').show();
 
@@ -59,11 +59,12 @@
             return v.report({
                 resource: uri,
                 container: container,
+                defaultJiveUi: { enable: false },
                 linkOptions: {
                     events: {
                         "click"  : function(evt, link){
                             // console.log(evt.target); // prints dom elem which represents link in report
-                            // console.log(link); // print link's data look in report data schema
+                            console.log(link); // print link's data look in report data schema
                             renderSlaveReport(link);
                         }
                     }
@@ -81,11 +82,11 @@
 
             //Setting up jquery dialog box and loading it into window
             //Setting the report div to "Report is Loading" and visualize.js will change that to report
-            var report_Title = hyperlinkObject.params.reportTitle;
+            var report_Title = hyperlinkObject.parameters.reportTitle;
 
             $("#dialog").dialog({
                 height: "auto",
-                width: "auto",
+                width: "450px",
                 minWidth: 300,
                 title: report_Title,
                     autoOpen: true,
@@ -98,26 +99,29 @@
                         duration: 1000
               }
             });
-            //$("#report").text("Loading...");
+            /*
+            $("#report").text("Loading...");
             $( "#progressbar" ).progressbar({
               value: false
             });
             $('#progressbar').show();
+            */
 
             // Building and loading of JasperReport with the prpoer params
             var myLinkedReportSettings = {
-                resource: hyperlinkObject.params._report,
+                resource: hyperlinkObject.parameters._report,
                 container: '#report',
                 events: {
                     reportCompleted: function(status, error) {
                         if (status === "ready") {
-                            $('#progressbar').hide();
+                            //$('#progressbar').hide();
                         } else if (status === "failed") {
                             error && alert(error);
                         }
+                        console.log('Report Completed: ' + status);
                     }
                 },
-                params: hyperlinkObject.params,
+                params: { parStoreId : [ hyperlinkObject.parameters.parStoreId ] },
                 error: function(err) {
                     alert(err.message);
                 }
@@ -125,6 +129,10 @@
             console.log('Report Object: ' );
             console.log( myLinkedReportSettings );
             myLinkedReport =  JRSClient.report(myLinkedReportSettings);
+
+            //myLinkedReport
+            //        .params({ "Country": ["USA"] })
+            //        .run(); 
 
         };
 
@@ -213,8 +221,9 @@
 
 <div id="dialog" title="Basic dialog">
 	
-	<div id="progressbar"><div class="progress-label">Loading...</div></div>
-	<div id="report"></div>
+	
+	<div id="report">
+    </div>
 </div>
 
 		
