@@ -64,11 +64,19 @@ function renderReport(uri, container, v) {
     return v.report({
         resource: uri,
         container: container,
-        /* I'll be setting this function as needed on the caller, see context-ic.html as an example
+        /*
+        // I'll be setting this event handlers function as needed on the caller, see context-ic.html as an example
         events: {
             changeTotalPages: function(totalPages) {
                 if ( typeof reportChangeTotalPages == 'function' ) {
                     reportChangeTotalPages(totalPages);
+                }
+            }
+            reportCompleted: function(status, error) {
+                if (status === "ready") {
+                    // do something
+                } else if (status === "failed") {
+                    error && alert(error);
                 }
             }
         },
@@ -159,6 +167,26 @@ function renderStandardIC(inputParameters) {
                     );
         });
     });
+}
+
+
+function makeFrame() {
+    ifrm = document.createElement("IFRAME");
+    ifrm.setAttribute("src", "http://developerfusion.com/");
+    ifrm.style.width = 640+"px";
+    ifrm.style.height = 480+"px";
+    document.body.appendChild(ifrm);
+
+    /*
+    // You can also use jQuery
+         $('<iframe />', {
+             name: 'myFrame',
+             id:   'myFrame',
+             ...
+         }).appendTo('body');
+     */
+
+
 }
 
 // Not sure if I'm still using this one
