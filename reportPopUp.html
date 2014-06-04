@@ -24,14 +24,13 @@
 
 <html lang="en">
 <head>
-	<title>Report Popup - JRS Embedded Demo</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/styles.css" rel="stylesheet">
-	
+	<title>Hyperlink PopUp - JRS Embedded Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link href="css/bootstrap.min.css" rel="stylesheet" />
+	<link href="css/styles.css" rel="stylesheet" />
+	<link href="css/redmond/jquery-ui-1.10.4.custom.min.css" rel="stylesheet"  />
 
 	<script src="js/jquery.min.js"></script>
-	<link rel="stylesheet" href="css/ui-lightness/jquery-ui-1.10.4.custom.min.css" />
 	<script src="js/jquery-ui-1.10.4.custom.min.js"></script>
 	
 	<script src="js/bootstrap.js"></script>
@@ -43,28 +42,22 @@
         var myReport;
         var myLinkedReport;
         var masterURI = '/public/Samples/Reports/AccountList';
-        // $('#mainprogressbar' ).progressbar({value: false});
-        $('#mainprogressbar').show();
 
+    
         // Get my Client Object
         visualize(function(v){
             JRSClient = v;
+            // @todo It will be nice to bind the link catcher after the report exec or pass extra parameters to the helper class are using in the other samples.
 
-            myReport = renderReportLink(masterURI, '#parent', JRSClient);
-        });
-
-        // @todo This will need to be moved to the Helper somehow...
-        // I'm not able to bind the link catcher after the fact
-        function renderReportLink(uri, container, v) {
-            return v.report({
-                resource: uri,
-                container: container,
-                defaultJiveUi: { enable: false },
+            myReport = v.report({
+                resource: masterURI,
+                container: "#accountList",
+                defaultJiveUi: { enabled: false },
                 linkOptions: {
                     events: {
                         "click"  : function(evt, link){
-                            // console.log(evt.target); // prints dom elem which represents link in report
-                            console.log(link); // print link's data look in report data schema
+                            // console.log(evt.target); // prints dom elem which triggered the event
+                            // console.log(link); // print link's data passed
                             renderSlaveReport(link);
                         }
                     }
@@ -74,50 +67,41 @@
                 }
             });
 
-        }
+        });
 
-        // Code handling for javascript drill down feature
+
+        // Code rendering the Drill-Down Report coming form the Hyperlink Event
 
         function renderSlaveReport(hyperlinkObject){
 
-            //Setting up jquery dialog box and loading it into window
-            //Setting the report div to "Report is Loading" and visualize.js will change that to report
             var report_Title = hyperlinkObject.parameters.reportTitle;
 
+            // $("#report").html('Loading....')
+
+            //Setting up jquery dialog box and loading it into window
             $("#dialog").dialog({
                 height: "auto",
                 width: "450px",
                 minWidth: 300,
                 title: report_Title,
-                    autoOpen: true,
-                    show: {
-                        effect: "blind",
-                        duration: 10
-                          },
-                    hide: {
-                        effect: "clip",
-                        duration: 1000
+                position: { my: "center+500", at: "top+200", of: "#accountList" } ,
+                autoOpen: true,
+                show: {
+                    effect: "blind",
+                    duration: 10
+                      },
+                hide: {
+                    effect: "clip",
+                    duration: 1000
               }
             });
-            /*
-            $("#report").text("Loading...");
-            $( "#progressbar" ).progressbar({
-              value: false
-            });
-            $('#progressbar').show();
-            */
 
-            // Building and loading of JasperReport with the prpoer params
+            // Extracting the Report Parameters from the Hyperlink object
             var myLinkedReportSettings = {
                 resource: hyperlinkObject.parameters._report,
                 container: '#report',
                 events: {
                     reportCompleted: function(status, error) {
-                        if (status === "ready") {
-                            //$('#progressbar').hide();
-                        } else if (status === "failed") {
-                            error && alert(error);
-                        }
                         console.log('Report Completed: ' + status);
                     }
                 },
@@ -126,48 +110,32 @@
                     alert(err.message);
                 }
             };
+            /*
             console.log('Report Object: ' );
             console.log( myLinkedReportSettings );
+            */
             myLinkedReport =  JRSClient.report(myLinkedReportSettings);
 
-            //myLinkedReport
-            //        .params({ "Country": ["USA"] })
-            //        .run(); 
-
         };
-
+        
 	</script>
     <style type="text/css">
-	    #repo h3 {
-	        padding: 5px 0;
-	        margin: 0;
-	    }
-	    #repo table {
-	        border-collapse: collapse;
-	    }
-	    #repo td {
-	        border: solid 1px #eee;
-	        padding: 4px 0;
-	    }
-	    .fill { top:20; right:0; bottom:0; left:0}
-	    #overlay { background: #333; opacity: 0.33}
-	    #ajax-icon { width:64px; height: 64px; margin:auto; color: #fff; text-align: center}
 	    .mygrid-wrapper-div {
 		    overflow: scroll;
 		    height: 400px;
-			}
-		#progressbar .ui-progressbar-value {
-    		background-color: #5C9CCC;
-    		position: relative;
-  		}
-  		#progressbar { 
-  			width: 400px;
-  			height: 15px;
-  		}
-  		#mainprogressbar { 
-  			width: 400px;
-  			height: 10px;
-  		}
+		}
+        #accountList {
+            width: 550px;
+            height: 450px;
+            overflow: hidden;
+        }
+        ._jrHyperLink {
+             cursor: pointer; 
+             cursor: hand;
+        }
+        #progressbar {
+            height: 15px;
+        }
   		#progressbar .ui-progressbar-value {
     		background-color: #5C9CCC;
   		}
@@ -180,7 +148,7 @@
 		}
 	</style>
 </head>
-<body onLoad="">
+<body onLoad="$('#progressbar').progressbar({ value: false });">
 <div class="navbar navbar-inverse navbar-static-top">
 	<div class="container" style="width:100%; ">
 			<a href="#" class="navbar-brand">Jaspersoft Portal</a>
@@ -210,24 +178,30 @@
 </div>
 
 <div class="container">
-	<div class="row">
 
-<div class="col-md-6">
-			<h3><a href="#">Store Sales</a></h3>
-			
-			<div id="mainprogressbar"></div>
-			<div id="parent"></div>
-    	</div>
+        <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;Actual Store Sales
+                   
+                    </h3>
+                </div>
+                <div class="panel-body">
 
-<div id="dialog" title="Basic dialog">
-	
-	
-	<div id="report">
+                    <div id="accountList">
+                        <div id="progressbar"></div>
+                    </div>
+                    
+                </span>
+                </div>
+            </div>
+        </div>
+        <div id="dialog" title="Basic dialog">
+            <div id="report"></div>
+        </div>
     </div>
-</div>
-
-		
-
 </div>
 </body>
 </html>
