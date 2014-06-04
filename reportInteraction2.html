@@ -140,7 +140,7 @@
                     default:
                         fullstatename = 'N/A';
             }
-            $('#StateName').html(stateName);
+            $('#StateName').html(fullstatename);
             $('#StateName1').html(stateName);
             $('#StateNameTitle').html(fullstatename);
             $('#StateSales').html('$ ' + Number(stateTotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
@@ -199,6 +199,22 @@
 </div>
 
 <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;Selected State: <span id="StateName" style="font-weight: bold;"></span>
+                   
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    Total Sales in <span id="StateName1" ></span>: <span id="StateSales" class="badge"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
 	<div class="row">
 
 <div class="col-md-5">
@@ -207,16 +223,11 @@
             <h3 class="panel-title">Sales by State</h3>
         </div>
         <div class="panel-body">
-            Overall sales per state for 2014. Click on the pie slices to get the detail.
+            Overall sales by state for 2014.
         </div>
         <div class="panel-body">
             <div id="states"></div>
         </div>
-          <div class="panel-body">
-                    <div class="well well-sm">
-                        Selected State : <span id="StateName" style="font-weight: bold;"></span> <br>
-                        Total Sales for <span id="StateName1" ></span>: <span id="StateSales" class="badge"></span></div>
-                </div>
     </div>
 
     	</div>
