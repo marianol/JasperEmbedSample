@@ -34,7 +34,7 @@
 	
 	<script src="js/bootstrap.js"></script>
 
-    <script src="http://visualizejs-preview.eng.jaspersoft.com:8080/jasperserver-pro-branch/client/visualize.js"></script>
+    <script src="http://localhost:8080/jasperserver-pro/client/visualize.js"></script>
     <script src="js/visualizeHelper.js"></script>
 
 	<script type="text/javascript">
@@ -58,7 +58,7 @@
                         "click"  : function(evt, link){
 
                             // console.log(evt.target); // prints dom elem which represents link in report
-                            // console.log(link); // print link's data look in report data schema
+                            //console.log(link); // print link's data look in report data schema
                             /*
                             link Object looks like this
                             for a reference Hyperlink:
@@ -85,20 +85,21 @@
                                  typeValue: "Custom"
                              }
                              */
+
                             updateState(link.parameters.store_state, link.parameters.total_sales);
                         }
                     }
                 },
                 error: function(err) {
-                    alert(err.message);
+                    console.log(err.message);
                 }
             });
 
         }
 
         function initializeReports() {
-            var master = '/public/Samples/VisualizeJS/StatesJFC';
-            var slave = '/public/Samples/VisualizeJS/Cities';
+            var master = '/public/Samples/Reports/States';
+            var slave = '/public/Samples/Reports/Cities';
 
             masterReport = renderReportLink(master, '#states', JRSClient);
             slaveReport = renderReport(slave, '#cities', JRSClient);
@@ -123,11 +124,26 @@
         // Update Slave report with the passed State Parameter
         function updateState(stateName, stateTotal) {
             var parameters = {};
-
+            var fullstatename = '';
             parameters['state'] = [ stateName ];
             slaveReport.params(parameters).run();
+            switch (stateName) {
+                    case 'CA':
+                        fullstatename = 'California';
+                        break;
+                    case 'WA':
+                        fullstatename = 'Washington';
+                        break;
+                    case 'OR':
+                        fullstatename = 'Oregon';
+                        break;
+                    default:
+                        fullstatename = 'N/A';
+            }
             $('#StateName').html(stateName);
-            $('#StateSales').html(Number(stateTotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            $('#StateName1').html(stateName);
+            $('#StateNameTitle').html(fullstatename);
+            $('#StateSales').html('$ ' + Number(stateTotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
 
         };
 
@@ -196,6 +212,11 @@
         <div class="panel-body">
             <div id="states"></div>
         </div>
+          <div class="panel-body">
+                    <div class="well well-sm">
+                        Selected State : <span id="StateName" style="font-weight: bold;"></span> <br>
+                        Total Sales for <span id="StateName1" ></span>: <span id="StateSales" class="badge"></span></div>
+                </div>
     </div>
 
     	</div>
@@ -204,11 +225,7 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Sales by City</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="well well-sm">
-                        Sales for <span id="StateName" style="font-weight: bold;"></span> <span id="StateSales" class="badge"></span></div>
+                    <h3 class="panel-title">Sales by City for <span id="StateNameTitle" style="font-weight: bold;"></span></h3>
                 </div>
                 <div class="panel-body">
                     <div id="cities"></div>
