@@ -189,7 +189,3 @@ function makeFrame() {
 
 }
 
-// Not sure if I'm still using this one
-function setOverlay(divID) {
-    $(divID).html( '<div id="overlay" class="fill"><div id="ajax-icon" class="fill"><i class="icon-spinner icon-spin icon-3x"></i><p>Loading...</p></div>');
-}
