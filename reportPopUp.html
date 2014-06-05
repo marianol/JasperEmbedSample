@@ -49,10 +49,10 @@
             JRSClient = v;
             // @todo It will be nice to bind the link catcher after the report exec or pass extra parameters to the helper class are using in the other samples.
 
-            myReport = v.report({
+            myReport = v.report( {
                 resource: masterURI,
                 container: "#accountList",
-                defaultJiveUi: { enabled: false },
+                defaultJiveUi: { enabled: true },
                 linkOptions: {
                     events: {
                         "click"  : function(evt, link){
@@ -62,9 +62,8 @@
                         }
                     }
                 },
-                error: function(err) {
-                    alert(err.message);
-                }
+                success: printComponentsNames,
+                error: handleError
             });
 
         });
@@ -118,6 +117,50 @@
 
         };
         
+        function filterStores() {
+            var filterValue = Number($("#filterStore").val());
+            console.log(filterValue);
+            if (filterValue == 0) {
+                myReport.updateComponent("store_sales", { 
+                    filter: {
+                        
+                    }, detailsRowFormat : {pattern: {
+                        negativeFormat: "(-###0)",
+                        precision: 2,
+                        currency: "USD"
+                    } } }).fail(handleError);
+            } else {
+                myReport.updateComponent("store_sales", { 
+                    filter: {
+                        operator: "greater_or_equal",
+                        value: filterValue
+                    }, detailsRowFormat : {pattern: {
+                        negativeFormat: "(-###0)",
+                        precision: 2,
+                        currency: "USD"
+                    } } }).fail(handleError);
+            }
+            /* 
+            myReport.updateComponent("store_name", { 
+                filter: {
+                    operator: "contain",
+                    value: $("#filterStore").val()
+                }
+            }).fail(handleError);
+            */
+            
+        }
+
+        function printComponentsNames(data){
+            data.components.forEach(function(c){
+                console.log("Component Name: " + c.name, "Component Lable: "+ c.label);
+            });
+        }
+
+        //show error
+        function handleError(err){
+            alert(err.message);
+        }
 	</script>
     <style type="text/css">
 	    .mygrid-wrapper-div {
@@ -187,6 +230,11 @@
                         <span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;Actual Store Sales
                    
                     </h3>
+                    <br>
+                    <div class="input-group input-group-sm" style="width: 250px; ">
+                      <span class="input-group-addon">Sales >= </span>
+                      <input id="filterStore" type="text" class="form-control" placeholder="" onChange="filterStores();">
+                    </div>
                 </div>
                 <div class="panel-body">
 
