@@ -116,6 +116,54 @@
             myLinkedReport =  JRSClient.report(myLinkedReportSettings);
 
         };
+
+        //Profit Slider
+        $(function() {
+    		$( "#slider-range" ).slider({
+      		orientation: "horizontal",
+      		range: true,
+      		min: 0,
+      		max: 55000,
+      		values: [ 0, 55000 ],
+            slide: function( event, ui ) {
+                $( "#profit" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+            },
+            change: function( event, ui ) {
+                console.log("Slider Change");
+                filterProfit();
+            }
+    		});
+    		$( "#profit" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+      			" - $" + $( "#slider-range" ).slider( "values", 1 ) );
+  			});
+        
+        function filterProfit() {
+            var lowValue = Number($( "#slider-range" ).slider( "values", 0 ));
+            var highValue = Number($( "#slider-range" ).slider( "values", 1 ));
+            console.log("Profit Filter - from: " + lowValue + " to: " + highValue + " ");
+
+            if (lowValue == 0 && highValue == 55000) {
+                myReport.updateComponent("Profit", {
+                    filter: {
+                        
+                    }, detailsRowFormat : {pattern: {
+                        negativeFormat: "(-###0)",
+                        precision: 2,
+                        currency: "USD"
+                    } } }).fail(handleError);
+            } else {
+                myReport.updateComponent("Profit", {
+                    filter: {
+                        operator: "between",
+                        value: [ lowValue , highValue ]
+                    }, detailsRowFormat : {pattern: {
+                        negativeFormat: "(-###0)",
+                        precision: 2,
+                        currency: "USD"
+                    } } }).fail(handleError);
+            }
+        }
+        
         
         function filterStores() {
             var filterValue = Number($("#filterStore").val());
@@ -140,20 +188,12 @@
                         currency: "USD"
                     } } }).fail(handleError);
             }
-            /* 
-            myReport.updateComponent("store_name", { 
-                filter: {
-                    operator: "contain",
-                    value: $("#filterStore").val()
-                }
-            }).fail(handleError);
-            */
             
         }
 
         function printComponentsNames(data){
             data.components.forEach(function(c){
-                console.log("Component Name: " + c.name, "Component Lable: "+ c.label);
+                console.log("Component Name: " + c.name, " - Component Label: "+ c.label);
             });
         }
 
@@ -230,11 +270,20 @@
                         <span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;Actual Store Sales
                    
                     </h3>
+
                     <br>
                     <div class="input-group input-group-sm" style="width: 250px; ">
                       <span class="input-group-addon">Sales >= </span>
                       <input id="filterStore" type="text" class="form-control" placeholder="" onChange="filterStores();">
                     </div>
+                    <br>
+                    <p>
+                    
+  					<label for="profit">Profit range:</label>
+  					<input type="text" id="profit" style="border:0; color:#f6931f; font-weight:bold;background-color:transparent;">
+					</p>
+                    <div id="slider-range" style="width:450px;" ></div>
+
                 </div>
                 <div class="panel-body">
 
