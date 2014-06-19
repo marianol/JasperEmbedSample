@@ -272,18 +272,17 @@
                     </h3>
 
                     <br>
-                    <div class="input-group input-group-sm" style="width: 250px; ">
+                    <div class="input-group input-group-sm" style="width: 250px; height: 41px; float: left; padding-right: 20px">
                       <span class="input-group-addon">Sales >= </span>
-                      <input id="filterStore" type="text" class="form-control" placeholder="" onChange="filterStores();">
+                      <input id="filterStore" type="text" class="form-control" placeholder="" style="height: 41px; " onChange="filterStores();">
                     </div>
-                    <br>
-                    <p>
-                    
-  					<label for="profit">Profit range:</label>
-  					<input type="text" id="profit" style="border:0; color:#f6931f; font-weight:bold;background-color:transparent;">
-					</p>
-                    <div id="slider-range" style="width:450px;" ></div>
 
+                    <div class="input-group input-group-sm" style="width: 492px;" >
+                        <span class="input-group-addon">Profit Range: </span>
+                        <input type="text" id="profit" class="form-control" disabled >
+
+                        <div id="slider-range" style="width:400px; " ></div>
+                    </div>
                 </div>
                 <div class="panel-body">
 
