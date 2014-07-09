@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!--
+ * ========================================================================
+ * reportPopUp.html 
+ * 
+ * ========================================================================
+ * Copyright 2014 
+ * Author: Gene Arnold, Mariano Luna
+ *
+ * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the 
+ * GNU Affero General Public License as published by the Free Software Foundation, either version 3 
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public 
+ * License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License 
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ * ======================================================================== */
+-->
+
+<html lang="en">
+<head>
+	<title>Dashboard Example - JRS Embedded Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link href="css/bootstrap.min.css" rel="stylesheet" />
+	<link href="css/styles.css" rel="stylesheet" />
+	<link href="css/redmond/jquery-ui-1.10.4.custom.min.css" rel="stylesheet"  />
+
+	<script src="js/jquery.min.js"></script>
+	<script src="js/jquery-ui-1.10.4.custom.min.js"></script>
+	
+	<script src="js/bootstrap.js"></script>
+
+    <style type="text/css">
+	    .mygrid-wrapper-div {
+		    overflow: scroll;
+		    height: 400px;
+		}
+        #accountList {
+            width: 550px;
+            height: 450px;
+            overflow: hidden;
+        }
+        ._jrHyperLink {
+             cursor: pointer; 
+             cursor: hand;
+        }
+        #progressbar {
+            height: 15px;
+        }
+  		#progressbar .ui-progressbar-value {
+    		background-color: #5C9CCC;
+  		}
+		#progressbar .progress-label {
+		    position: absolute;
+		    left: 50%;
+		    top: 2px;
+		    font-weight: bold;
+		    text-shadow: 1px 1px 0 #fff;
+		}
+	</style>
+</head>
+<body onLoad="$('#progressbar').progressbar({ value: false });">
+<div class="navbar navbar-inverse navbar-static-top">
+	<div class="container" style="width:100%; ">
+			<a href="#" class="navbar-brand">Jaspersoft Portal</a>
+			<button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+
+			<div class="collapse navbar-collapse navHeaderCollapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li class="active"><a href="index.html">Home</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Extra Samples <b class="caret"></b><a/>
+						<ul class="dropdown-menu">
+							<li><a href="context-ic.html">Contextual Input Controls</a></li>
+							<li><a href="reportInteraction.html">External Report Interaction</a></li>
+							<li><a href="reportInteraction2.html">Report Interaction</a></li>
+                            <li><a href="reportPopUp.html">Report Popup</a></li>
+							<li><a href="dashboard.html">Dashboard Example</a></li>
+						</ul>
+					</li>
+					<li><a href="http://github.com/marianol/JasperEmbedSample">About</a></li>
+				</ul>
+			</div>
+	</div>
+</div>
+
+<div class="container" style="width:100%; ">
+    <div class="row">
+        <div class="col-md-12">
+        <iframe src="dashboard_main.html" style="width:100%; height:1680px" seamless frameborder="0"></iframe>
+        </div>
+    </div>
+</div>
+</body>
+</html>
