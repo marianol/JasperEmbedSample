@@ -1,11 +1,13 @@
-<!DOCTYPE html>
-<!--
+ <!--
+ *
  * ========================================================================
- * index.html 
+ * Dashboard Example using Jaspersoft's new Visualize.JS API
  * 
  * ========================================================================
- * Copyright 2013 
- * Author: Mariano Luna
+ * Copyright 2014 
+ * Author: Gene Arnold 
+ *
+ * https://github.com/GeneArnold/
  *
  * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
  *
@@ -19,171 +21,400 @@
  *
  * You should have received a copy of the GNU Affero General Public License 
  * along with this program. If not, see http://www.gnu.org/licenses/.
- * ======================================================================== */
--->
+ * ======================================================================== 
+ *
+ *
+ -->
 
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-	<title>Home - JRS Embedded Demo</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/styles.css" rel="stylesheet">
-	
+	<title></title>
 
-	<script src="js/jquery.min.js"></script>
-	
-	<script src="js/bootstrap.js"></script>
-	<script src="js/require.js"></script>
-    <script type='text/javascript' src="http://localhost:8080/jasperserver-pro/client/visualize.js"></script>
-	<script src="js/visualizeHelper.js"></script>
+	<link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="css/portal.css">
 
-	<script type="text/JavaScript">
-		var uri_a = '/public/Samples/Reports/02._Sales_Mix_by_Demographic_Report';
-        var uri_b = '/public/Samples/Reports/01._Geographic_Results_by_Segment_Report';
-        var report_one;
-        var report_two;
-
-        // Get my Client Object
-        /*
-         Tried deferred like this:
-         visualize().done(function(v){
-         JRSClient = v;
-         }).fail(function(err){
-         alert(err.message);
-         });
-         but looks like is not yet implemented, so i went ahead with the callback..
-         */
-        visualize(function(v){
-            //'v' it's a client to JRS instance under the config set by visualize.config();
-            JRSClient = v;
-            initialize();
-        });
-
-        // Used an init function because was not able to use the deferred method above...
-        function initialize() {
-
-            // Initialize the 2 divs with the predefined reports
-            report_one = renderReport(uri_a, "#report1", JRSClient);
-            report_two = renderReport(uri_b, "#report2", JRSClient);
-
-            // Populate the repository list
-            JRSClient.resourcesSearch({
-                    // server: serverUrl,
-                    folderUri:"/public/Samples/Reports",
-                    recursive:false,
-                    success:listRepository,
-                    error:function (err) {
-                        alert(err);
-                    }
-                });
-        }
-
-    // utility functions moved to visualizeHelper.js
-
-    // Repo Lister
-    function listRepository(results) {
-
-        $.each(results, function() {
-                    $('#reportsList').append('<tr><td>' + this.label + ' - (' + this.resourceType + ')' + '</td><td>' + this.creationDate
-                            + '</td>'
-                            + '<td>'
-                            + '<button id="buttong"  onclick="renderReport(\'' + this.uri + '\', \'#report1\', JRSClient )" >RUN in One</button>&nbsp;&nbsp;'
-                            + '<button id="buttong"  onclick="renderReport(\'' + this.uri + '\', \'#report2\', JRSClient )" >RUN in Two</button>'
-                            + '</td></tr>');
-                });
-    }
-
-
-    </script>
-    <style type="text/css">
-	    #repo h3 {
-	        padding: 5px 0;
-	        margin: 0;
-	    }
-	    #repo table {
-	        border-collapse: collapse;
-	    }
-	    #repo td {
-	        border: solid 1px #eee;
-	        padding: 4px 0;
-	    }
-	    .fill { top:20; right:0; bottom:0; left:0}
-	    #overlay { background: #333; opacity: 0.33}
-	    #ajax-icon { width:64px; height: 64px; margin:auto; color: #fff; text-align: center}
-	    .mygrid-wrapper-div {
-		    overflow: scroll;
-		    height: 400px;
-			}
+	<style type="text/css">
+		body{
+			overflow: hidden;
+		}
+		.title{
+			font-size:16px;
+			font-weight:bold;
+			padding:20px 10px;
+			background:#eee;
+			overflow:hidden;
+			border-bottom:1px solid #ccc;
+		}
+		.t-list{
+			padding:5px;
+		}
+		button{
+			width: 130px;
+		}
+		.panel-title{
+			font-family: sans-serif;
+		}
 	</style>
-</head>
-<body onLoad="$('#repo').hide();">
-<div class="navbar navbar-inverse navbar-static-top">
-	<div class="container" style="width:100%; ">
-			<a href="#" class="navbar-brand">Jaspersoft Portal</a>
-			<button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		</button>
 
-			<div class="collapse navbar-collapse navHeaderCollapse">
-				<ul class="nav navbar-nav navbar-right">
-					<li class="active"><a href="index.html">Home</a></li>
-					
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Extra Samples <b class="caret"></b><a/>
-						<ul class="dropdown-menu">
-							<li><a href="context-ic.html">Contextual Input Controls</a></li>
-							<li><a href="reportInteraction.html">External Report Interaction</a></li>
-							<li><a href="reportInteraction2.html">Report Interaction</a></li>
-							<li><a href="reportPopUp.html">Report Popup</a></li>
-							<li><a href="dashboard.html">Dashboard Example</a></li>
-						</ul>
-					</li>
-					<li><a href="http://github.com/marianol/JasperEmbedSample">About</a></li>
-				</ul>
-			</div>
-	</div>
-</div>
+	<script type="text/javascript" src="scripts/jquery.min.js"></script>
+	<script type="text/javascript" src="scripts/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="scripts/jquery.portal.js"></script>
+	<script type='text/javascript' src="http://localhost:8080/jasperserver-pro/client/visualize.js"></script>
 
-	<div class="container" style="width:100%; ">
-	<div class="row">
-		<div class="col-md-12">
-			<button id="buttonrepo"  onclick="$('#repo').toggle();" >Toggle Report List</button>
-			
-			<div id="repo" class="mygrid-wrapper-div">
-			<table id="reportsList" width="100%">
-			    <tr><td colspan="3" style="background: #eee;"><h3>My Reports</h3></td></tr>
-			</table>
-			</div>
-		</div>
-	</div>
-	<div class="row">
+	<script type="text/javascript">
 
-		<div class="col-md-6">
-			<h3><a href="#">One</a></h3>
-			<div id="report1" class="fill"></div>
-    				<div id="ajax-icon" class="fill">
-        				<i class="icon-spinner icon-spin icon-3x"></i> 
-        				<p>Loading...</p>
-    				</div>
-		</div>
+		//Wrapping and creating the portal. Setting a few parameters around how it will look
+		$(function(){
+			$('#pp').portal({
+				border:false,
+				fit:false
+			});
+		});
 
-		<div class="col-md-6">
-			<h3><a href="#">Two</a></h3>
-			<div id="report2" class="fill2"></div>
-    				<div id="ajax-icon" class="fill">
-        				<i class="icon-spinner icon-spin icon-3x"></i> 
-        				<p>Loading...</p>
-    				</div>
-		</div>
-	</div>
+		//Here is the JRSClient object that will be used to access repo information and to render reports
+		var JRSClient;
 
-</div>
+		//Log into JRS via visualize.js and create a session object that will be used though out the application
+		visualize({
+			auth: {
+				name: "jasperadmin",
+				password: "jasperadmin",
+				organization:"organization_1"
+			}
+		}, function (v) {
+			JRSClient = v;
+			init();
+		}, function () {
+			alert("Unexpected error!");
+		});
 
+		//Getting a list of all the reports the logged in user can access then run a function to display them 
+		function init(){
+			JRSClient.resourcesSearch({
+	                // server: serverUrl,
+	                folderUri:"/public/Dashboard_Reports",
+	                recursive:false,
+	                success:listRepository,
+	                types: ["reportUnit"],
+	                error:function (err) {
+	                    alert(err);
+	                }
+	            });
+		}
+
+		//Using this function we are adding buttons to the screen to add and remove reports to the dashboard
+		//Custom attributes are used to hold information about the status of the report's display and URI inside of JRS
+		function listRepository(results) {
+	        $.each(results, function(index) {
+	        	$("#cp").append("<button status='off' reportURI='"+this.uri+"' onclick=addReport(btnId='btn_"+index+"') title='"+this.label+"' id='btn_"+index+"'>"+reportNameTrim(this.label)+"</button>");
+            });
+		}
+
+    	//Report name trim helper
+    	function reportNameTrim(name) {
+			if (name.length > 20) {
+				var x = name.substring(0, 17) + '...';
+				return x;
+			}else{
+				return name;
+			}
+		}
+
+		//Adding report to the dashboard
+		var colIndex = 0;
+		function addReport(btnId){
+
+			var panelCnt = $('#pp').portal('getPanels');
+
+			var reportStatus = $("#"+btnId).attr('status');
+
+			var reportURI = $("#"+btnId).attr('reportURI');
+
+			var reportName = $("#"+btnId).attr('title');
+
+			if (reportStatus == 'off'){
+
+				if (panelCnt.length == 0){colIndex=0};
+
+				if (colIndex > 2){colIndex=0};
+
+				var p = $('<div />').appendTo('body');
+
+				p.attr('id', 'pannel_'+btnId);
+
+				p.panel({
+					title:reportName,
+					content:'<div id="report_'+btnId+'" style="padding:5px;">Loading your report...</div>',
+					height:430,
+					closable:false,
+					collapsible:true,
+					noheader:false,
+					tools:[{
+				        iconCls:'icon-pdf',
+				        handler:function(){exportReport(btnId);}
+				    },{
+				        iconCls:'icon-reload',
+				        handler:function(){refreshReport(btnId);}
+				    },{
+				    	iconCls:'icon-filter',
+				        handler:function(){
+				        	$('#inputControls').html('');
+				        	$('#sendButtonBox').hide();
+				        	$('#dlg').attr('reportId',btnId);
+				        	$('#dlg').dialog('open');
+				        	var ic = JRSClient.inputControls({
+										resource: reportURI,
+										success: function(controls) {
+										controls.forEach(buildControl);
+									}
+								});
+				        }
+				    }]
+				});
+
+				$('#pp').portal('add', {
+					panel:p,
+					columnIndex:colIndex
+				});
+
+				colIndex = colIndex + 1;
+
+				renderReport(reportURI,'#report_'+btnId,JRSClient);
+
+				$("#"+btnId).attr('status','on');
+
+				$("#"+btnId).css( "background-color", "darkgrey" );
+
+			}else{
+
+				removeReport(btnId);
+				
+			}
+		}
+
+		function buildControl(control) {
+			switch(control.type) {
+				case "singleValueNumber":
+					$("<div class='panel-title' style='padding-bottom:5px;padding-top:5px'/>")
+						.html(control.label)
+						.appendTo("#inputControls");
+
+					$("<input value='' />")
+     					.attr("id", control.id)
+     					.attr("name", "")
+     					.attr("type", "singleValueNumber")
+     					.appendTo("#inputControls");
+
+			        $('#'+control.id).numberbox({
+					    min:0,
+					});	
+
+					$('#sendButtonBox').show();
+					break;
+				case "multiSelectCheckbox":
+					$("<div class='panel-title' style='padding-bottom:5px;padding-top:5px'/>")
+						.html(control.label)
+						.appendTo("#inputControls");
+
+					$("<input value='' />")
+     					.attr("id", control.id)
+     					.attr("name", "")
+     					.attr("type", "multiSelect")
+     					.appendTo("#inputControls"); 
+
+			        $('#'+control.id).combobox({
+					    data:control.state.options,
+					    valueField:'value',
+					    textField:'label',
+					    multiple:true,
+					    onLoadSuccess:function(){
+					    	$('#sendButtonBox').show();
+					    },
+					});	
+			        break;
+			    case "singleSelect":
+			    	$("<div class='panel-title' style='padding-bottom:5px;padding-top:5px'/>")
+						.html(control.label)
+						.appendTo("#inputControls");
+
+			    	$("<input value='' />")
+     					.attr("id", control.id)
+     					.attr("name", "")
+     					.attr("type", "singleSelect")
+     					.appendTo("#inputControls"); 
+
+			        $('#'+control.id).combobox({
+					    data:control.state.options,
+					    valueField:'value',
+					    textField:'label',
+					    multiple:false,
+					    onLoadSuccess:function(){
+					    	$('#sendButtonBox').show();
+					    },
+					});	
+			        break;
+			    case "multiSelect":
+			    	$("<div class='panel-title' style='padding-bottom:5px;padding-top:5px'/>")
+						.html(control.label)
+						.appendTo("#inputControls");
+
+			        $("<input value='' />")
+     					.attr("id", control.id)
+     					.attr("name", "")
+     					.attr("type", "multiSelect")
+     					.appendTo("#inputControls"); 
+
+			        $('#'+control.id).combobox({
+					    data:control.state.options,
+					    valueField:'value',
+					    textField:'label',
+					    multiple:true,
+					    onLoadSuccess:function(){
+					    	$('#sendButtonBox').show();
+					    },
+					});	
+			        break;
+			    case "singleValueText":
+			    	$("<div class='panel-title' style='padding-bottom:5px;padding-top:5px'/>")
+						.html(control.label)
+						.appendTo("#inputControls");
+
+			        $("<input value='' />")
+     					.attr("id", control.id)
+     					.attr("name", "")
+     					.attr("type", "singleValueText")
+     					.appendTo("#inputControls"); 
+					$('#sendButtonBox').show();
+			        break;
+			    default:
+			        
+			}
+		}
+
+		function filterReport(id){
+			//alert('Filters Coming Soon!');
+			//Get list of all input controls
+			var data = {};
+			$.each($('#inputControls > :input'),function(index,value){
+
+				switch($('#'+value.id).attr("type")){
+					case "singleSelect":
+						data[value.id] = $('#'+value.id).combobox('getValues');
+						break;
+					case "multiSelect":
+						data[value.id] = $('#'+value.id).combobox('getValues');
+						break;
+					case "singleValueText":
+						var v = [];
+						v.push($('#'+value.id).val());
+						data[value.id] = v;
+						break;
+					case "singleValueNumber":
+						var v = [];
+						v.push($('#'+value.id).numberbox('getValue'));
+						data[value.id] = v;
+						break;
+				}
+			})
+
+			$.each(reportsList,
+				function(index,value){
+					if(value.container() == ("#report_"+id)){
+							value
+							.params(data)
+							.run();
+					}
+				}
+			);	
+		}
+
+		function refreshReport(id){
+			$.each(reportsList,
+				function(index,value){
+					if(value.container() == ("#report_"+id)){
+							value.refresh();
+					}
+				}
+			);		
+		}
+
+		function exportReport(id){
+			$.each(reportsList,
+				function(index,value){
+					if(value.container() == ("#report_"+id)){
+						value
+						.export({
+							outputFormat: "pdf"
+						})
+						.done(function (link) {
+							window.open(link.href); // open new window to download report
+						})
+						.fail(function (err) {
+							alert(err.message);
+						});
+					}
+				}
+			);		
+		}
+
+
+
+		//Used to remove report panels from the dashboard
+		function removeReport(id){
+
+			reportsList = jQuery.grep(reportsList, function( report, i ) {
+			  return ( report.container() !== ("#report_"+id) );
+			});
+
+			$('#pp').portal('remove',$('#pannel_'+id));
+
+			$("#"+btnId).attr('status','off');
+
+			$("#"+btnId).css( "background-color", "buttonface" );
+
+			colIndex = 0;
+		}
+
+		var reportsList = new Array();
+		//When a pannel is added to the dashboard this function is called to use visualize.js to create the report within that pannel
+		function renderReport(uri,container,v) {
+	        var report = new v.report({
+	        resource: uri,
+	        container: container,
+	        events: {
+				reportCompleted: function(status) {
+				}
+			},
+	        error: function(err) {
+	                alert(err.message);
+	            }
+	        });
+	        reportsList.push(report);
+		}
 	
+	</script>
 
 
+</head>
+<body class="easyui-layout">
 
+	<div id="cp" data-options="region:'west',title:'Report Options',split:true,minWidth:150" style="width:150px;padding-left: 5px;padding-top: 5px;"></div>
+
+    <div data-options="region:'center',title:'Dashboard'" style="padding:5px;background:#eee;">
+    	<div id="pp" style="width:1500px;height:auto;">
+	    	<div style="width:33%"></div>
+	    	<div style="width:33%"></div>
+	    	<div style="width:33%"></div>
+		</div>
+    </div>
+
+    <div id="dlg" reportId="" class="easyui-dialog" title="Report Input Controls" data-options="closed:true,resizable:true" style="width:260px;height:350px;padding:10px">
+    	<div id="inputControls"></div>
+    	<div id="sendButtonBox" style='padding-bottom:5px;padding-top:20px'>
+    		<a id="btnFilter" href="javascript:void(0)" class="easyui-linkbutton" onclick="filterReport($('#dlg').attr('reportId'));" >SetValue</a>
+    	</div>	
+    </div>
 </body>
 </html>
