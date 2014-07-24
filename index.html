@@ -5,7 +5,7 @@
  * 
  * ========================================================================
  * Copyright 2013 
- * Author: Mariano Luna
+ * Author: Mariano Luna, Gianluca Natali
  *
  * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
  *
@@ -34,66 +34,14 @@
 	
 	<script src="js/bootstrap.js"></script>
 	<script src="js/require.js"></script>
-    <script type='text/javascript' src="http://localhost:8080/jasperserver-pro/client/visualize.js"></script>
+	
+	<script src="js/config.js"></script>
 	<script src="js/visualizeHelper.js"></script>
+	<script src="js/pageSpecific.js"></script>
 
 	<script type="text/JavaScript">
-		var uri_a = '/public/Samples/Reports/02._Sales_Mix_by_Demographic_Report';
-        var uri_b = '/public/Samples/Reports/01._Geographic_Results_by_Segment_Report';
-        var report_one;
-        var report_two;
-
-        // Get my Client Object
-        /*
-         Tried deferred like this:
-         visualize().done(function(v){
-         JRSClient = v;
-         }).fail(function(err){
-         alert(err.message);
-         });
-         but looks like is not yet implemented, so i went ahead with the callback..
-         */
-        visualize(function(v){
-            //'v' it's a client to JRS instance under the config set by visualize.config();
-            JRSClient = v;
-            initialize();
-        });
-
-        // Used an init function because was not able to use the deferred method above...
-        function initialize() {
-
-            // Initialize the 2 divs with the predefined reports
-            report_one = renderReport(uri_a, "#report1", JRSClient);
-            report_two = renderReport(uri_b, "#report2", JRSClient);
-
-            // Populate the repository list
-            JRSClient.resourcesSearch({
-                    // server: serverUrl,
-                    folderUri:"/public/Samples/Reports",
-                    recursive:false,
-                    success:listRepository,
-                    error:function (err) {
-                        alert(err);
-                    }
-                });
-        }
-
-    // utility functions moved to visualizeHelper.js
-
-    // Repo Lister
-    function listRepository(results) {
-
-        $.each(results, function() {
-                    $('#reportsList').append('<tr><td>' + this.label + ' - (' + this.resourceType + ')' + '</td><td>' + this.creationDate
-                            + '</td>'
-                            + '<td>'
-                            + '<button id="buttong"  onclick="renderReport(\'' + this.uri + '\', \'#report1\', JRSClient )" >RUN in One</button>&nbsp;&nbsp;'
-                            + '<button id="buttong"  onclick="renderReport(\'' + this.uri + '\', \'#report2\', JRSClient )" >RUN in Two</button>'
-                            + '</td></tr>');
-                });
-    }
-
-
+		var jsHelper = new IndexPageJS();
+		jsHelper.init(window);
     </script>
     <style type="text/css">
 	    #repo h3 {
@@ -138,6 +86,7 @@
 							<li><a href="reportInteraction2.html">Report Interaction</a></li>
 							<li><a href="reportPopUp.html">Report Popup</a></li>
 							<li><a href="dashboard.html">Dashboard Example</a></li>
+							<li><a href="dashboardDesigner.html">Dashboard Designer</a></li>
 						</ul>
 					</li>
 					<li><a href="http://github.com/marianol/JasperEmbedSample">About</a></li>

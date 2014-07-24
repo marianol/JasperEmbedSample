@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <!--
  * ========================================================================
- * reportInteraction2.html 
+ * reportPopUp.html 
  * 
  * ========================================================================
- * Copyright 2013 
- * Author: Ernesto 0ngaro, Gianluca Natali, Mariano Luna
+ * Copyright 2014 
+ * Author: Christoph Wurm, Gianluca Natali
  *
  * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
  *
@@ -24,46 +24,66 @@
 
 <html lang="en">
 <head>
-	<title>Report Interaction - JRS Embedded Demo</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/styles.css" rel="stylesheet">
-	
+	<title>Hyperlink PopUp - JRS Embedded Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link href="css/bootstrap.min.css" rel="stylesheet" />
+	<link href="css/styles.css" rel="stylesheet" />
+	<link href="css/redmond/jquery-ui-1.10.4.custom.min.css" rel="stylesheet"  />
 
 	<script src="js/jquery.min.js"></script>
+	<script src="js/jquery-ui-1.10.4.custom.min.js"></script>
 	
 	<script src="js/bootstrap.js"></script>
-
+	
 	<script src="js/config.js"></script>
-    <script src="js/visualizeHelper.js"></script>
+	<script src="js/visualizeHelper.js"></script>
 	<script src="js/pageSpecific.js"></script>
-
+	
+	<link rel="stylesheet" href="css/dashboardDesigner/jquery-ui.css">
+	<link rel="stylesheet" href="css/dashboardDesigner/chosen.css">
+	<link rel="stylesheet" href="css/dashboardDesigner/index.css">
+	<script src="js/dashboardDesigner/jquery.js"></script>
+	<script src="js/dashboardDesigner/jquery-ui.js"></script>
+	<script src="js/dashboardDesigner/chosen.jquery.js"></script>
+	<script src="js/dashboardDesigner/vjsDashboard.js"></script>
+	
+	
 	<script type="text/JavaScript">
-		var jsHelper = new ReportInteraction2PageJS();
+		var jsHelper = new DashboardDesignerPageJS();
 		jsHelper.init(window);
-    </script>	
-    <style type="text/css">
-	    #repo h3 {
-	        padding: 5px 0;
-	        margin: 0;
-	    }
-	    #repo table {
-	        border-collapse: collapse;
-	    }
-	    #repo td {
-	        border: solid 1px #eee;
-	        padding: 4px 0;
-	    }
-	    .fill { top:20; right:0; bottom:0; left:0}
-	    #overlay { background: #333; opacity: 0.33}
-	    #ajax-icon { width:64px; height: 64px; margin:auto; color: #fff; text-align: center}
+    </script>
+
+	
+	<style type="text/css">
 	    .mygrid-wrapper-div {
 		    overflow: scroll;
 		    height: 400px;
-			}
+		}
+        #accountList {
+            width: 550px;
+            height: 450px;
+            overflow: hidden;
+        }
+        ._jrHyperLink {
+             cursor: pointer; 
+             cursor: hand;
+        }
+        #progressbar {
+            height: 15px;
+        }
+  		#progressbar .ui-progressbar-value {
+    		background-color: #5C9CCC;
+  		}
+		#progressbar .progress-label {
+		    position: absolute;
+		    left: 50%;
+		    top: 2px;
+		    font-weight: bold;
+		    text-shadow: 1px 1px 0 #fff;
+		}
 	</style>
 </head>
-<body onLoad="">
+<body onLoad="$('#progressbar').progressbar({ value: false });">
 <div class="navbar navbar-inverse navbar-static-top">
 	<div class="container" style="width:100%; ">
 			<a href="#" class="navbar-brand">Jaspersoft Portal</a>
@@ -82,7 +102,7 @@
 							<li><a href="context-ic.html">Contextual Input Controls</a></li>
 							<li><a href="reportInteraction.html">External Report Interaction</a></li>
 							<li><a href="reportInteraction2.html">Report Interaction</a></li>
-							<li><a href="reportPopUp.html">Report Popup</a></li>
+                            <li><a href="reportPopUp.html">Report Popup</a></li>
 							<li><a href="dashboard.html">Dashboard Example</a></li>
 							<li><a href="dashboardDesigner.html">Dashboard Designer</a></li>
 						</ul>
@@ -93,59 +113,21 @@
 	</div>
 </div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;Selected State: <span id="StateName" style="font-weight: bold;"></span>
-                   
-                    </h3>
-                </div>
-                <div class="panel-body">
-                    Total Sales in <span id="StateName1" ></span>: <span id="StateSales" class="badge"></span>
-                </div>
-            </div>
-        </div>
-    </div>
 
-	<div class="row">
-
-<div class="col-md-5">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Sales by State</h3>
-        </div>
-        <div class="panel-body">
-            Overall sales by state for 2014.
-        </div>
-        <div class="panel-body">
-            <div id="states"></div>
-        </div>
-    </div>
-
-    	</div>
-
-		<div class="col-md-7">
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Sales by City for <span id="StateNameTitle" style="font-weight: bold;"></span></h3>
-                </div>
-                <div class="panel-body">
-                    <div id="cities"></div>
-                </div>
-            </div>
-		</div>
-
-		
-
+		      <!-- Tabs -->
+<div id="tabs">
+	<ul id="tabs-header">
+		<li id="addTab-li"><a id="addTab" class="addTab" href="#tabs-1"></a></li>
+		<li class="right"><button id="restore">Restore</button></li>
+		<li class="right"><button id="save">Save</button></li>
+		<li class="right" id="username"><label>User:</label><input type="text" value="default" /></li>
+	</ul>
+	<div id="gallery">
+		<h3>Reports</h3>
+	</div>
+	<div id="dashboard-container">
+	</div>
 </div>
-
-	
-
-
 
 </body>
 </html>

@@ -5,7 +5,7 @@
  * 
  * ========================================================================
  * Copyright 2014
- * Author: Mariano Luna
+ * Author: Mariano Luna, Gianluca Natali
  *
  * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
  *
@@ -34,112 +34,15 @@
 	<script src="js/bootstrap.js"></script>
 	<script src="js/require.js"></script>
 
-    <script src="http://localhost:8080/jasperserver-pro/client/visualize.js"></script>
+	<script src="js/config.js"></script>
     <script src="js/visualizeHelper.js"></script>
+	<script src="js/pageSpecific.js"></script>
 
 	<script type="text/JavaScript">
-		var myReport;
-        var myReportIC;
-        var currentPageIndex = 1;
-        var maxPageIndex = 0;
-
-        // Get my Client Object
-        visualize(function(v){
-            JRSClient = v;
-            initialize();
-        });
-
-	    function initialize() {
-	    	var reportUri = '/public/Samples/Reports/ProfitDetailReport';
-
-	    	myReport = renderReport(reportUri, '#report1', JRSClient);
-
-            myReport.events({
-                changeTotalPages: function(totalPages) {
-                    console.log("Total Pages: " + totalPages);
-                    maxPageIndex = totalPages;
-                    $('#total').html(maxPageIndex);
-                    $('#previousPage').hide();
-                }
-            });
-
-            var ic = JRSClient.inputControls({
-                    resource: reportUri,
-                    success: function(data) {
-                        renderStandardIC(data);
-                        myReportIC = data; // Store this just in case :)
-                    }
-                });
-
-            /*
-             Wire the Report to the Rendered IC
-             */
-            $('#btn').click(function() {
-                // Iterate trough the IC's in the Div
-                var parameters = {};
-                $('#inputOptions').children().each(function(idx, itm) {
-                    /*
-                    console.log($(itm).attr('id'));
-                    console.log($(itm).val());
-                    */
-                    parameters[$(itm).attr('id')] = $(itm).val();
-                });
-                // console.log(parameters);
-                myReport.params(parameters).run(); // Re run the report with the new params
-            });
-
-
-            /*
-             Setup page navigation buttons
-             */
-            $("#previousPage").click(function() {
-                $('#nextPage').show();
-
-                myReport
-                        .pages(--currentPageIndex)
-                        .run()
-                        .fail(function(err) { alert(err); });
-                $('#current').html(currentPageIndex);
-                if (currentPageIndex <= 1)  {
-                    $('#previousPage').hide();
-                } else {
-                    $('#previousPage').show();
-                }
-            });
-
-            $("#nextPage").click(function() {
-                $('#previousPage').show();
-                myReport
-                        .pages(++currentPageIndex)
-                        .run()
-                        .fail(function(err) { alert(err); });
-                $('#current').html(currentPageIndex);
-                if (currentPageIndex == maxPageIndex)  {
-                    $('#nextPage').hide();
-                } else {
-                    $('#nextPage').show();
-                }
-            });
-        }
-
-        /*
-        * Re run the Report with a changed Input Parameter
-        *
-        * @param {string} inputControlId - ID of the input parameter to be changed
-        * @param {Object} paramValue - new value to be passed
-         */
-        function passControls(inputControlId, paramValue) {
-            var parameters = {};
-
-            parameters[inputControlId] = [ paramValue ];
-            console.log(parameters);
-            currentPageIndex = 1;
-            myReport.params(parameters).run();
-        }
-
-
-	    
-	</script>
+		var jsHelper = new ContextPageJS();
+		jsHelper.init(window);
+    </script>	
+	
     <style type="text/css">
 	    #repo h3 {
 	        padding: 5px 0;
@@ -183,6 +86,7 @@
 							<li><a href="reportInteraction2.html">Report Interaction</a></li>
 							<li><a href="reportPopUp.html">Report Popup</a></li>
 							<li><a href="dashboard.html">Dashboard Example</a></li>
+							<li><a href="dashboardDesigner.html">Dashboard Designer</a></li>
 						</ul>
 					</li>
 					<li><a href="http://github.com/marianol/JasperEmbedSample">About</a></li>
@@ -196,10 +100,10 @@
 		<div class="col-md-12">
             <h3><a href="#">Profit Detail</a></h3>
             <div class="btn-toolbar" role="toolbar">
-            <button type="buttonDrinks" class="btn btn-default btn-lg" onclick="passControls('ProductFamily','Drink');">
+            <button type="buttonDrinks" class="btn btn-default btn-lg" onclick="jsHelper.passControls('ProductFamily','Drink');">
                 <span class="glyphicon glyphicon-tint"></span> Drinks
             </button>
-            <button type="buttonFood" class="btn btn-default btn-lg" onclick="passControls('ProductFamily','Food');">
+            <button type="buttonFood" class="btn btn-default btn-lg" onclick="jsHelper.passControls('ProductFamily','Food');">
                 <span class="glyphicon glyphicon-cutlery"></span> Food
             </button>
             </div>
