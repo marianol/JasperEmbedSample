@@ -77,16 +77,21 @@ function setReportHeight($reportContainer) {
 }
 
 function buildControl(control, $container) {
-	function buildOptions(options) {
-		var template = "<option>{value}</option>";
-		return options.reduce(function (memo, option) {
-			return memo + template.replace("{value}", option.value);
-		}, "")
-	}
-    
-	$container.append("<tr><td><label>" + control.label + "</td>"
+	if (typeof control.state.options != 'undefined'){
+		function buildOptions(options) {
+			var template = "<option>{value}</option>";
+			return options.reduce(function (memo, option) {
+				return memo + template.replace("{value}", option.value);
+			}, "")
+		}
+
+		$container.append("<tr><td><label>" + control.label + "</td>"
 		+ "<td><select param-id=" + control.id + " multiple='true'><option></option>"
 		+ buildOptions(control.state.options) + "</select></td></tr>");
+	}else{
+		$container.append("<tr><td><label>" + control.label + "</td>"
+		+ "<td><input type='text' param-id=" + control.id + "></td></tr>");
+	}	
 }
 
 function createReportToolbar() {
@@ -112,10 +117,14 @@ function createReportToolbar() {
 					.click(function() {
 						var params = new Object();
 
-						$("select").each(function(index, select) {
+						$("[param-id]").each(function(index, select) {
 							var $paramValue = $(select).val();
-							if ($paramValue !== null) {
+							if ($paramValue !== null & select.localName == 'select') {
 								params[$(select).attr("param-id")] = $(select).val();
+							}else if($paramValue !== null & select.localName == 'input'){
+								var v = [];
+								v.push($(select).val());
+								params[$(select).attr("param-id")] = v;
 							}
 						});
 
