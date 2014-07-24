@@ -1,0 +1,152 @@
+.ui-widget {
+    font-family: GillSans, Calibri, Trebuchet, sans-serif;
+}
+
+.ui-tabs {
+    padding: 0;
+    box-shadow: 0 0 0.4em grey;
+}
+
+.ui-tabs .ui-tabs-nav {
+    background: white;
+    padding: 0;
+    border: none;
+}
+
+.ui-tabs .ui-tabs-nav li {
+    margin: 0;
+}
+
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited,
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
+    color: #555;
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+    padding: 0.3ex 1.5em;
+}
+
+.ui-corner-top {
+    border-radius: 0;
+}
+
+.ui-tabs .ui-tabs-panel {
+	padding: 0;
+}
+
+#addTab-li {
+    background: white;
+    border: none;
+}
+
+#addTab {
+    background-image: url("images/new.png");
+    background-repeat: no-repeat;
+    background-size: 35%;
+    background-position: center;
+    height: 2.5ex;
+}
+
+#tabs-header .right {
+	float: right;
+	margin: 0.5ex 0.5em;
+	font-size: 75%;
+}
+
+#username label {
+	margin-right: 0.5em;
+}
+
+#username input {
+	width: 7em;
+}
+
+#gallery {
+    color: white;
+    background-color: #555;
+    padding: 0.5%;
+}
+
+html {
+    height: 100%;
+}
+
+.column {
+    min-height: 300px;
+}
+
+.dashboard {
+	height: 100%;
+}
+
+.dashboard > ul > li {
+    border: 1px solid #555;
+}
+
+.report-container {
+	border: 1px solid #aaa;
+    box-shadow: 0 0 2px #aaa;
+	border-radius: 2px;
+	cursor: move;
+	overflow: hidden;
+}
+
+.report-header {
+	font-size: 90%;
+	padding: 0.6ex 0.5em;
+	font-weight: bold;
+	color: white;
+	background: #aaa;
+}
+
+.report-inputs {
+	font-size: 85%;
+	padding: 1.5ex 0.5em;
+	border-bottom: 1px solid #aaa;
+	background: #fff3cf;
+}
+
+.report-inputs label {
+	padding-right: 0.5em;
+}
+
+.report-inputs button {
+	float: right;
+	clear: both;
+}
+
+.toolbar {
+	float: right;
+}
+
+.toolbar > div {
+	float: left;
+	margin-left: 0.5em;
+}
+
+.toolbar > div:hover {
+	color: #c00000;
+	cursor: default;
+}
+
+.report {
+	height: 100%;
+	width: 100%;
+	overflow: auto;
+}
+
+.report > div {
+    height: 94%;
+}
+
+.column {
+    width: 400px;
+}
+
+.loading {
+	font-style: italic;
+}
+
+#drag {
+	border: 1px dashed grey;
+}

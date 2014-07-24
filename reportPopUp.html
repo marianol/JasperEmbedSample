@@ -5,7 +5,7 @@
  * 
  * ========================================================================
  * Copyright 2014 
- * Author: Gene Arnold, Mariano Luna
+ * Author: Gene Arnold, Mariano Luna, Gianluca Natali
  *
  * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
  *
@@ -34,174 +34,16 @@
 	<script src="js/jquery-ui-1.10.4.custom.min.js"></script>
 	
 	<script src="js/bootstrap.js"></script>
-
-    <script src="http://localhost:8080/jasperserver-pro/client/visualize.js"></script>
+	
+	<script src="js/config.js"></script>
 	<script src="js/visualizeHelper.js"></script>
+	<script src="js/pageSpecific.js"></script>
 
-	<script type="text/javascript">
-        var myReport;
-        var myLinkedReport;
-        var masterURI = '/public/Samples/Reports/AccountList';
+	<script type="text/JavaScript">
+		var jsHelper = new ReportPopUpJS();
+		jsHelper.init(window);
+    </script>
 
-    
-        // Get my Client Object
-        visualize(function(v){
-            JRSClient = v;
-            // @todo It will be nice to bind the link catcher after the report exec or pass extra parameters to the helper class are using in the other samples.
-
-            myReport = v.report( {
-                resource: masterURI,
-                container: "#accountList",
-                defaultJiveUi: { enabled: true },
-                linkOptions: {
-                    events: {
-                        "click"  : function(evt, link){
-                            // console.log(evt.target); // prints dom elem which triggered the event
-                            // console.log(link); // print link's data passed
-                            renderSlaveReport(link);
-                        }
-                    }
-                },
-                success: printComponentsNames,
-                error: handleError
-            });
-
-        });
-
-
-        // Code rendering the Drill-Down Report coming form the Hyperlink Event
-
-        function renderSlaveReport(hyperlinkObject){
-
-            var report_Title = hyperlinkObject.parameters.reportTitle;
-
-            // $("#report").html('Loading....')
-
-            //Setting up jquery dialog box and loading it into window
-            $("#dialog").dialog({
-                height: "auto",
-                width: "450px",
-                minWidth: 300,
-                title: report_Title,
-                position: { my: "center+500", at: "top+200", of: "#accountList" } ,
-                autoOpen: true,
-                show: {
-                    effect: "blind",
-                    duration: 10
-                      },
-                hide: {
-                    effect: "clip",
-                    duration: 1000
-              }
-            });
-
-            // Extracting the Report Parameters from the Hyperlink object
-            var myLinkedReportSettings = {
-                resource: hyperlinkObject.parameters._report,
-                container: '#report',
-                events: {
-                    reportCompleted: function(status, error) {
-                        console.log('Report Completed: ' + status);
-                    }
-                },
-                params: { parStoreId : [ hyperlinkObject.parameters.parStoreId ] },
-                error: function(err) {
-                    alert(err.message);
-                }
-            };
-            /*
-            console.log('Report Object: ' );
-            console.log( myLinkedReportSettings );
-            */
-            myLinkedReport =  JRSClient.report(myLinkedReportSettings);
-
-        };
-
-        //Profit Slider
-        $(function() {
-    		$( "#slider-range" ).slider({
-      		orientation: "horizontal",
-      		range: true,
-      		min: 0,
-      		max: 55000,
-      		values: [ 0, 55000 ],
-            slide: function( event, ui ) {
-                $( "#profit" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-            },
-            change: function( event, ui ) {
-                console.log("Slider Change");
-                filterProfit();
-            }
-    		});
-    		$( "#profit" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-      			" - $" + $( "#slider-range" ).slider( "values", 1 ) );
-  			});
-        
-        function filterProfit() {
-            var lowValue = Number($( "#slider-range" ).slider( "values", 0 ));
-            var highValue = Number($( "#slider-range" ).slider( "values", 1 ));
-            console.log("Profit Filter - from: " + lowValue + " to: " + highValue + " ");
-
-            if (lowValue == 0 && highValue == 55000) {
-                myReport.updateComponent("Profit", {
-                    filter: {
-                        
-                    }, detailsRowFormat : {pattern: {
-                        negativeFormat: "(-###0)",
-                        precision: 2,
-                        currency: "USD"
-                    } } }).fail(handleError);
-            } else {
-                myReport.updateComponent("Profit", {
-                    filter: {
-                        operator: "between",
-                        value: [ lowValue , highValue ]
-                    }, detailsRowFormat : {pattern: {
-                        negativeFormat: "(-###0)",
-                        precision: 2,
-                        currency: "USD"
-                    } } }).fail(handleError);
-            }
-        }
-        
-        
-        function filterStores() {
-            var filterValue = Number($("#filterStore").val());
-            console.log(filterValue);
-            if (filterValue == 0) {
-                myReport.updateComponent("store_sales", { 
-                    filter: {
-                        
-                    }, detailsRowFormat : {pattern: {
-                        negativeFormat: "(-###0)",
-                        precision: 2,
-                        currency: "USD"
-                    } } }).fail(handleError);
-            } else {
-                myReport.updateComponent("store_sales", { 
-                    filter: {
-                        operator: "greater_or_equal",
-                        value: filterValue
-                    }, detailsRowFormat : {pattern: {
-                        negativeFormat: "(-###0)",
-                        precision: 2,
-                        currency: "USD"
-                    } } }).fail(handleError);
-            }
-            
-        }
-
-        function printComponentsNames(data){
-            data.components.forEach(function(c){
-                console.log("Component Name: " + c.name, " - Component Label: "+ c.label);
-            });
-        }
-
-        //show error
-        function handleError(err){
-            alert(err.message);
-        }
-	</script>
     <style type="text/css">
 	    .mygrid-wrapper-div {
 		    overflow: scroll;
@@ -252,6 +94,7 @@
 							<li><a href="reportInteraction2.html">Report Interaction</a></li>
                             <li><a href="reportPopUp.html">Report Popup</a></li>
 							<li><a href="dashboard.html">Dashboard Example</a></li>
+							<li><a href="dashboardDesigner.html">Dashboard Designer</a></li>
 						</ul>
 					</li>
 					<li><a href="http://github.com/marianol/JasperEmbedSample">About</a></li>
@@ -294,9 +137,9 @@
                 </div>
             </div>
         </div>
-        <div id="dialog" title="Basic dialog">
-            <div id="report"></div>
-        </div>
+		<div id="dialogContainer">
+		</div>
+       
     </div>
 </div>
 </body>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+ 
+	<servlet>
+		<servlet-name>DashboardServlet</servlet-name>
+		<servlet-class>com.jaspersoft.vjsdashboard.DashboardSaver</servlet-class>
+
+		<init-param>
+			<!-- Class name of the JDBC driver, passed to Class.forName() -->
+			<param-name>jdbcDriver</param-name>
+			<param-value>org.postgresql.Driver</param-value>
+		</init-param>
+            	
+		<init-param>
+			<!-- JDBC URL of the database, passed to DriverManager.getConnection() -->
+			<param-name>jdbcUrl</param-name>
+			<param-value>jdbc:postgresql://127.0.0.1:5435/foodmart</param-value>
+		</init-param>
+            	
+		<init-param>
+			<!-- Username for accessing the database -->
+			<param-name>dbUsername</param-name>
+			<param-value>postgres</param-value>
+		</init-param>
+            	
+		<init-param>
+			<!-- Password for accessing the database -->
+			<param-name>dbPassword</param-name>
+			<param-value>postgres</param-value>
+		</init-param>
+            	
+		<init-param>
+			<!-- Database table to use, must have columns "username" and "json" -->
+			<param-name>dbTableName</param-name>
+			<param-value>arrangement</param-value>
+		</init-param>
+	</servlet>
+ 
+	<servlet-mapping>
+		<servlet-name>DashboardServlet</servlet-name>
+		<url-pattern>/dashboard.do</url-pattern>
+	</servlet-mapping>
+</web-app>

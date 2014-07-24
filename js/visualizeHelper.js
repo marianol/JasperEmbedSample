@@ -20,38 +20,53 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  * ======================================================================== 
  */
+ 
+ var JRSClient; // Will be storing my JRS Client object here :)
 
+ /*Loading Visualize javascript - with this we avoid to import the js file statically in page*/
+ var myJRServer = {
+	visualizeJS_libraryUrl : function() { 
+		libraryUrl = config.jrsUrl + "/client/visualize.js"
+		if( this.targetJrsUrl !== undefined){
+			libraryUrl = libraryUrl + "?baseUrl=" + this.targetJrsUrl;
+		}
+		return libraryUrl;	
+	}
+ };
 
-/*
- Initialize Visualize.js config and JRSClient object placeholder
+ //As soon as the script is loaded in the DOM we initialize the visualizeJS instance
+$.getScript( myJRServer.visualizeJS_libraryUrl(), function() { 	
+	launchVisualizeJs();
+});
 
- Visualize.js Common config now this can be held here, still each page needs to call the remote visualize.js
-  scripts still have not found a way to parametrize that so is easy to move the sample form a JRS running in
-  a different URL without using awk
- Full Example:
- myConfig = {
-     auth: {
-         name: "jasperadmin",
-         password: "jasperadmin",
-         organization:"organization_1",
-         locale: "en",
-         timezone: "Europe/Helsinki"
-     }
- }
- */
-jrsConfig =  {
-    auth: {
-        name: "jasperadmin",
-        password: "jasperadmin",
-        organization: "organization_1"
-    }
-};
+function launchVisualizeJs() {
+	
+	/*
+	 Initialize Visualize.js config and JRSClient object placeholder
 
-var JRSClient; // Will be storing my JRS Client object here :)
+	Full Example:
+	 myConfig = {
+		 auth: {
+			 name: "jasperadmin",
+			 password: "jasperadmin",
+			 organization:"organization_1",
+			 locale: "en",
+			 timezone: "Europe/Helsinki"
+		 }
+	 }
+	 */
+	jrsConfig =  {
+		auth: {
+			name: config.jrsUsername,
+			password: config.jrsPassword,
+			organization: config.jrsOrganization
+		}
+	};
 
+	// Pass config to Visualize
+	visualize.config(jrsConfig);
+}
 
-// Pass config to Visualize
-visualize.config(jrsConfig);
 
 /**
  * Create and run report component with provided properties

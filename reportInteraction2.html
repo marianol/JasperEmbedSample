@@ -5,7 +5,7 @@
  * 
  * ========================================================================
  * Copyright 2013 
- * Author: Ernesto 0ngaro
+ * Author: Ernesto 0ngaro, Gianluca Natali
  *
  * Unless you have purchased a commercial license agreement from Jaspersoft Inc., the following license terms apply:
  *
@@ -34,120 +34,14 @@
 	
 	<script src="js/bootstrap.js"></script>
 
-    <script src="http://localhost:8080/jasperserver-pro/client/visualize.js"></script>
+	<script src="js/config.js"></script>
     <script src="js/visualizeHelper.js"></script>
+	<script src="js/pageSpecific.js"></script>
 
-	<script type="text/javascript">
-        var masterReport;
-        var slaveReport;
-
-        // Get my Client Object
-        visualize(function(v){
-            JRSClient = v;
-            initializeReports();
-        });
-
-        // @todo This will need to be moved to the Helper somehow...
-        // I'm not able to bind the link catcher after the fact
-        function renderReportLink(uri, container, v) {
-            return v.report({
-                resource: uri,
-                container: container,
-                linkOptions: {
-                    events: {
-                        "click"  : function(evt, link){
-
-                            // console.log(evt.target); // prints dom elem which represents link in report
-                            //console.log(link); // print link's data look in report data schema
-                            /*
-                            link Object looks like this
-                            for a reference Hyperlink:
-                             Object {
-                                 href: "javascript:updateState('CA')"
-                                 id: "561719435"
-                                 reference: "javascript:updateState('CA')"
-                                 selector: "._jrHyperLink.Reference"
-                                 type: "Reference"
-                                 typeValue: "Reference"
-                             }
-                             And like this for a Report Execution:
-                             Object {
-                             id: "2021149141"
-                                parameters: Object {
-                                     _report: "/public/Samples/VisualizeJS/Cities"
-                                     action: "doThisAction"
-                                     reportInstance: "slaveReport"
-                                     store_state: "CA"
-                                     total_sales: "159167.8400"
-                                     }
-                                 selector: "._jrHyperLink.ReportExecution"
-                                 type: "ReportExecution"
-                                 typeValue: "Custom"
-                             }
-                             */
-
-                            updateState(link.parameters.store_state, link.parameters.total_sales);
-                        }
-                    }
-                },
-                error: function(err) {
-                    console.log(err.message);
-                }
-            });
-
-        }
-
-        function initializeReports() {
-            var master = '/public/Samples/Reports/States';
-            var slave = '/public/Samples/Reports/Cities';
-
-            masterReport = renderReportLink(master, '#states', JRSClient);
-            slaveReport = renderReport(slave, '#cities', JRSClient);
-            updateState('CA', 159167.84);
-
-            /*
-            // This function is not working if I bind it here, @todo check syntax
-            // For now using renderReportLink() as a workaround
-            masterReport.linkOptions({
-                events: {
-                    "click" : function(evt, link){
-                        console.log('Link Clicked:');
-                        console.log(evt.target); // prints dom elem which represents link in report
-                        console.log(link); // print link's data look in report data schema
-                    }
-                }
-            });
-            */
-
-        }
-
-        // Update Slave report with the passed State Parameter
-        function updateState(stateName, stateTotal) {
-            var parameters = {};
-            var fullstatename = '';
-            parameters['state'] = [ stateName ];
-            slaveReport.params(parameters).run();
-            switch (stateName) {
-                    case 'CA':
-                        fullstatename = 'California';
-                        break;
-                    case 'WA':
-                        fullstatename = 'Washington';
-                        break;
-                    case 'OR':
-                        fullstatename = 'Oregon';
-                        break;
-                    default:
-                        fullstatename = 'N/A';
-            }
-            $('#StateName').html(fullstatename);
-            $('#StateName1').html(stateName);
-            $('#StateNameTitle').html(fullstatename);
-            $('#StateSales').html('$ ' + Number(stateTotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-
-        };
-
-	</script>
+	<script type="text/JavaScript">
+		var jsHelper = new ReportInteraction2PageJS();
+		jsHelper.init(window);
+    </script>	
     <style type="text/css">
 	    #repo h3 {
 	        padding: 5px 0;
@@ -190,6 +84,7 @@
 							<li><a href="reportInteraction2.html">Report Interaction</a></li>
 							<li><a href="reportPopUp.html">Report Popup</a></li>
 							<li><a href="dashboard.html">Dashboard Example</a></li>
+							<li><a href="dashboardDesigner.html">Dashboard Designer</a></li>
 						</ul>
 					</li>
 					<li><a href="http://github.com/marianol/JasperEmbedSample">About</a></li>
