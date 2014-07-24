@@ -1,6 +1,6 @@
 /*
  * ========================================================================
- *pageSpecific.js : v0.1.0
+ * pageSpecific.js : v0.1.1
  * 
  * ========================================================================
  * Copyright 2014
@@ -376,9 +376,9 @@ function ReportPopUpJS(){
 				} } }).fail(handleError);
 		}
 	}
-	
-	
-	function filterStores() {
+
+
+    this.filterStores = function () {
 		var filterValue = Number($("#filterStore").val());
 		console.log(filterValue);
 		if (filterValue == 0) {
