@@ -179,11 +179,11 @@ function ReportInteractionPageJS(windowObj){
 	var myReport;
 	var reportUri = '/public/Samples/Reports/20.3_SalesPerCityReport';
 	
-	this.init = function(windowObj){	
-		initializePage(windowObj, initialize); 
-		google.maps.event.addDomListener(windowObj, "load", initializeMap);
-		
-	}
+	this.init = function (windowObj) {
+        initializePage(windowObj, initialize);
+        google.maps.event.addDomListener(windowObj, "load", initializeMap);
+
+    };
 
 	function initialize(){	
 		myReport = renderReport(reportUri, '#report1', JRSClient);
@@ -208,7 +208,7 @@ function ReportInteractionPageJS(windowObj){
 			['Los Angeles',34.052222, -118.242778,4],
 			['San Diego',32.715278, -117.156389,3],
 			['San Francisco',37.775000, -122.418333,2],
-			['Beverly Hills',34.073611, -118.399444,1],
+			['Beverly Hills',34.073611, -118.399444,1]
 		];
 
 		var map = new google.maps.Map(myDiv, {
@@ -253,7 +253,9 @@ function ReportPopUpJS(){
 	}
 	
 	function initialize(){	
-		// @todo It will be nice to bind the link catcher after the report exec or pass extra parameters to the helper class are using in the other samples.
+		/*
+		@todo It will be nice to bind the link catcher after the report exec or pass extra parameters to the helper class are using in the other samples.
+		*/
 		myReport = JRSClient.report( {
 			resource: masterURI,
 			container: "#accountList",
@@ -416,12 +418,12 @@ function ReportPopUpJS(){
 	}
 }
 
-function ReportInteraction2PageJS(){
+function ReportInteraction2PageJS() {
 
 	var masterReport;
 	var slaveReport;
 
-	this.init = function(windowObj){	
+	this.init = function(windowObj) {
 		initializePage(windowObj, initialize); 	
 	}
 		
@@ -429,74 +431,66 @@ function ReportInteraction2PageJS(){
 		var master = '/public/Samples/Reports/States';
 		var slave = '/public/Samples/Reports/Cities';
 
-		masterReport = renderReportLink(master, '#states', JRSClient);
-		slaveReport = renderReport(slave, '#cities', JRSClient);
-		updateState('CA', 159167.84);
+		masterReport = JRSClient.report({
+            resource: master,
+            container: '#states',
+            linkOptions: {
+                events: {
+                    "click"  : function(evt, link){
+                        updateState(link.parameters.store_state, link.parameters.total_sales);
+                        /*
+                         link Object looks like this
+                         for a reference Hyperlink:
+                         Object {
+                         href: "javascript:updateState('CA')"
+                         id: "561719435"
+                         reference: "javascript:updateState('CA')"
+                         selector: "._jrHyperLink.Reference"
+                         type: "Reference"
+                         typeValue: "Reference"
+                         }
+                         And like this for a Report Execution:
+                         Object {
+                         id: "2021149141"
+                         parameters: Object {
+                         _report: "/public/Samples/VisualizeJS/Cities"
+                         action: "doThisAction"
+                         reportInstance: "slaveReport"
+                         store_state: "CA"
+                         total_sales: "159167.8400"
+                         }
+                         selector: "._jrHyperLink.ReportExecution"
+                         type: "ReportExecution"
+                         typeValue: "Custom"
+                         }
+                         */
+                    }
+                }
+            },
+            error: function(err) {
+                console.log(err.message);
+            }
+        });
+		slaveReport = JRSClient.report({
+            resource: slave,
+            container: '#cities',
+            events: {
+             reportCompleted: function(status, error) {
+                 if (status === "ready") {
+                     /*
+                     @todo: doing this using the updateState function generates a flickering of the report, since it is loaded once and then updates. We need to look into a more  elegant way of doing this
+                      */
+                     updateState('CA', 159167.84);
 
-		/*
-		// This function is not working if I bind it here, @todo check syntax
-		// For now using renderReportLink() as a workaround
-		masterReport.linkOptions({
-			events: {
-				"click" : function(evt, link){
-					console.log('Link Clicked:');
-					console.log(evt.target); // prints dom elem which represents link in report
-					console.log(link); // print link's data look in report data schema
-				}
-			}
-		});
-		*/
-
-	}
-
-	// @todo This will need to be moved to the Helper somehow...
-	// I'm not able to bind the link catcher after the fact
-	function renderReportLink(uri, container, v) {
-		return JRSClient.report({
-			resource: uri,
-			container: container,
-			linkOptions: {
-				events: {
-					"click"  : function(evt, link){
-
-						// console.log(evt.target); // prints dom elem which represents link in report
-						//console.log(link); // print link's data look in report data schema
-						/*
-						link Object looks like this
-						for a reference Hyperlink:
-						 Object {
-							 href: "javascript:updateState('CA')"
-							 id: "561719435"
-							 reference: "javascript:updateState('CA')"
-							 selector: "._jrHyperLink.Reference"
-							 type: "Reference"
-							 typeValue: "Reference"
-						 }
-						 And like this for a Report Execution:
-						 Object {
-						 id: "2021149141"
-							parameters: Object {
-								 _report: "/public/Samples/VisualizeJS/Cities"
-								 action: "doThisAction"
-								 reportInstance: "slaveReport"
-								 store_state: "CA"
-								 total_sales: "159167.8400"
-								 }
-							 selector: "._jrHyperLink.ReportExecution"
-							 type: "ReportExecution"
-							 typeValue: "Custom"
-						 }
-						 */
-
-						updateState(link.parameters.store_state, link.parameters.total_sales);
-					}
-				}
-			},
-			error: function(err) {
-				console.log(err.message);
-			}
-		});
-
+                 } else if (status === "failed") {
+                    error && alert(error);
+                 }
+                 }
+             },
+            error: function(err) {
+                alert(err.message);
+            }
+        });
 	}
 
 	// Update Slave report with the passed State Parameter
@@ -699,8 +693,8 @@ function DashboardPageJS(){
 					.appendTo("#inputControls");
 
 				$('#'+control.id).numberbox({
-					min:0,
-				});	
+					min:0
+                });
 
 				$('#sendButtonBox').show();
 				break;
@@ -722,8 +716,8 @@ function DashboardPageJS(){
 					multiple:true,
 					onLoadSuccess:function(){
 						$('#sendButtonBox').show();
-					},
-				});	
+					}
+                });
 				break;
 			case "singleSelect":
 				$("<div class='panel-title' style='padding-bottom:5px;padding-top:5px'/>")
@@ -743,8 +737,8 @@ function DashboardPageJS(){
 					multiple:false,
 					onLoadSuccess:function(){
 						$('#sendButtonBox').show();
-					},
-				});	
+					}
+                });
 				break;
 			case "multiSelect":
 				$("<div class='panel-title' style='padding-bottom:5px;padding-top:5px'/>")
@@ -764,8 +758,8 @@ function DashboardPageJS(){
 					multiple:true,
 					onLoadSuccess:function(){
 						$('#sendButtonBox').show();
-					},
-				});	
+					}
+                });
 				break;
 			case "singleValueText":
 				$("<div class='panel-title' style='padding-bottom:5px;padding-top:5px'/>")
