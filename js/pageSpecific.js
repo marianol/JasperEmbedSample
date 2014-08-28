@@ -422,9 +422,14 @@ function ReportInteraction2PageJS() {
 
 	var masterReport;
 	var slaveReport;
+    var defState = 'CA';
+    var defSalesTotal =  159167.84;
+    var fullStateName = "";
+
 
 	this.init = function(windowObj) {
-		initializePage(windowObj, initialize); 	
+		initializePage(windowObj, initialize);
+
 	}
 		
 	function initialize() {
@@ -439,8 +444,7 @@ function ReportInteraction2PageJS() {
                     "click"  : function(evt, link){
                         updateState(link.parameters.store_state, link.parameters.total_sales);
                         /*
-                         link Object looks like this
-                         for a reference Hyperlink:
+                         link Object looks like this for a reference Hyperlink:
                          Object {
                          href: "javascript:updateState('CA')"
                          id: "561719435"
@@ -449,21 +453,20 @@ function ReportInteraction2PageJS() {
                          type: "Reference"
                          typeValue: "Reference"
                          }
-                         And like this for a Report Execution:
+                         And like this for a Report Execution with Parameters:
                          Object {
                          id: "2021149141"
                          parameters: Object {
-                         _report: "/public/Samples/VisualizeJS/Cities"
-                         action: "doThisAction"
-                         reportInstance: "slaveReport"
-                         store_state: "CA"
-                         total_sales: "159167.8400"
+                             _report: "/public/Samples/VisualizeJS/Cities"
+                             store_state: "CA"
+                             total_sales: "159167.8400"
                          }
                          selector: "._jrHyperLink.ReportExecution"
                          type: "ReportExecution"
                          typeValue: "Custom"
                          }
                          */
+                        console.log(link);
                     }
                 }
             },
@@ -474,14 +477,15 @@ function ReportInteraction2PageJS() {
 		slaveReport = JRSClient.report({
             resource: slave,
             container: '#cities',
+            params: {
+                state: [ defState ]
+            },
             events: {
              reportCompleted: function(status, error) {
                  if (status === "ready") {
                      /*
-                     @todo: doing this using the updateState function generates a flickering of the report, since it is loaded once and then updates. We need to look into a more  elegant way of doing this
+                     Nothing to see here... but the report has finished.
                       */
-                     updateState('CA', 159167.84);
-
                  } else if (status === "failed") {
                     error && alert(error);
                  }
@@ -491,6 +495,25 @@ function ReportInteraction2PageJS() {
                 alert(err.message);
             }
         });
+
+        // Setup my app UI with the initial defaults.
+        switch (defState) {
+            case 'CA':
+                fullStateName = 'California';
+                break;
+            case 'WA':
+                fullStateName = 'Washington';
+                break;
+            case 'OR':
+                fullStateName = 'Oregon';
+                break;
+            default:
+                fullStateName = 'N/A';
+        }
+        $('#StateName').html(fullStateName);
+        $('#StateName1').html(defState);
+        $('#StateNameTitle').html(fullStateName);
+        $('#StateSales').html('$ ' + Number(defSalesTotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
 	}
 
 	// Update Slave report with the passed State Parameter
